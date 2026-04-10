@@ -4,7 +4,8 @@ import PlayerSelector from "./playerSelector/PlayerSelector.js";
 window.onload = function (){
     let PS = new PlayerSelector('PlayerSelector', 5, 4);
     let ST;
-    let startScores = new Array<number>;
+    let Scores = new Array<number>;
+
 
     let startBtn = document.getElementById('start');
     if(startBtn) startBtn.addEventListener('click', e =>{
@@ -12,9 +13,9 @@ window.onload = function (){
             let players = PS.lock();
 
             ST = new HistoryTable('ScoreTable', players);
-            
-            players.forEach(p => startScores.push(0));
-            ST.addEntry(startScores);
+
+            players.forEach(p => Scores.push(0));
+            ST.addEntry(Scores);
 
             startBtn.hidden = true;
         }

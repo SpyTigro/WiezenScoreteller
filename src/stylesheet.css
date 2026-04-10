@@ -15,6 +15,24 @@ p{
     left: 0;
     Border: 5px solid grey;
     border-radius: 25px;
+    border-width: auto;
+}
+
+.deler {
+  position: relative;
+}
+
+.deler::before {
+  content: "";
+  position: absolute;
+  left: -25%;
+  top: -10%; /* directly below the element */
+  width: 20px;   /* adjust size as needed */
+  height: 20px;
+  background: red;
+  border-radius: 50%;
+  z-index: -1;
+  pointer-events: none;
 }
 
 .PlayerSelector > *{
