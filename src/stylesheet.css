@@ -1,12 +1,12 @@
-body{
+body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-p{
-   margin: 0;
+p {
+    margin: 0;
 }
 
-.sidebar{
+.sidebar {
     width: 40%;
     position: fixed;
     padding: 1% 1%;
@@ -19,32 +19,36 @@ p{
 }
 
 .deler {
-  position: relative;
+    position: relative;
 }
 
 .deler::before {
-  content: "";
-  position: absolute;
-  left: -25%;
-  top: -10%; /* directly below the element */
-  width: 20px;   /* adjust size as needed */
-  height: 20px;
-  background: red;
-  border-radius: 50%;
-  z-index: -1;
-  pointer-events: none;
+    content: "";
+    position: absolute;
+    left: -32%;
+    top: -12%;
+    /* directly below the element */
+    width: 20px;
+    /* adjust size as needed */
+    height: 20px;
+    background: red;
+    border-radius: 50%;
+    z-index: -1;
+    pointer-events: none;
 }
 
-.PlayerSelector > *{
+.PlayerSelector>* {
     margin: 2px;
 }
 
-.main{
+.main {
     padding: 2%;
     margin-left: 50%;
 }
 
-.HistoryTable table, th, td{
+.HistoryTable table,
+th,
+td {
     padding: 10px;
     text-align: center;
     border-left: 1px solid black;

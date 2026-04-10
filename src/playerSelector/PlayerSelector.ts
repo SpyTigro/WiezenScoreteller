@@ -18,6 +18,7 @@ export default class PlayerSelector {
         if (!div) {
             div = document.createElement('div');
             div.id = htmlId;
+            document.body.appendChild(div);
         }
         div.innerHTML = '';
         this.HTMLDiv = div;
@@ -30,7 +31,7 @@ export default class PlayerSelector {
                 alert('Max players reached');
                 return;
             }
-            this.HTMLDiv.appendChild(this.addPlayerSetter('', this.currentP));
+            document.getElementById(`${this.htmlId}-setter${this.currentP - 1}`)?.after(this.addPlayerSetter('', this.currentP));
             this.currentP++;
         });
 
@@ -67,14 +68,18 @@ export default class PlayerSelector {
         }
         let addBtn = document.getElementById(`${this.htmlId}-addBtn`);
         if (addBtn) addBtn.hidden = true;
-        
+
         let vdBtn = document.getElementById(`${this.htmlId}-vdBtn`);
         if (vdBtn) vdBtn.hidden = true;
 
         return arr;
     }
 
-    nextDeler() {
+    getDeler(): number {
+        return this.deler;
+    }
+
+    private nextDeler() {
         if (this.deler < this.currentP - 1) this.deler++;
         else this.deler = 0;
         for (let i = 0; i < this.currentP; i++) {
@@ -83,10 +88,6 @@ export default class PlayerSelector {
             if (i == this.deler) labelEl.className = 'deler';
             else labelEl.className = '';
         }
-    }
-
-    getDeler(): number{
-        return this.deler;
     }
 
     private addPlayerSetter(label: string, i: number): HTMLElement {

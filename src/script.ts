@@ -1,27 +1,42 @@
+import ActionSelector from "./actionSelector/ActionSelector.js";
 import HistoryTable from "./historyTable/HistoryTable.js";
 import PlayerSelector from "./playerSelector/PlayerSelector.js";
 
-window.onload = function (){
-    let PS = new PlayerSelector('PlayerSelector', 5, 4);
-    let ST;
-    let Scores = new Array<number>;
+let PS: PlayerSelector, ST: HistoryTable, AS: ActionSelector;
+let players = new Array<string>;
+let Scores = new Array<number>;
 
+window.onload = function () {
+    PS = new PlayerSelector('PlayerSelector', 5, 4);
+    let actionBtn = document.getElementById('ActionButton');
+    if (actionBtn) actionBtn.addEventListener('click', actionBtnClickHandler);
+}
 
-    let startBtn = document.getElementById('start');
-    if(startBtn) startBtn.addEventListener('click', e =>{
-        try{
-            let players = PS.lock();
+function actionBtnClickHandler(e: Event) {
+    const actionBtn = e.currentTarget as HTMLElement;
+    if(actionBtn.innerText == 'Start') start(actionBtn);
+    else calc();
+}
 
-            ST = new HistoryTable('ScoreTable', players);
+function start(actionBtn: HTMLElement) {
+    try {
+        players = PS.lock();
 
-            players.forEach(p => Scores.push(0));
-            ST.addEntry(Scores);
+        ST = new HistoryTable('ScoreTable', players);
 
-            startBtn.hidden = true;
-        }
-        catch(e){
-            alert(e);
-            PS = new PlayerSelector('PlayerSelector', 5, 4);
-        }
-    });
+        players.forEach(p => Scores.push(0));
+        ST.addEntry(Scores);
+
+        AS = new ActionSelector('PlayerSelector', players, PS.getDeler());
+
+        actionBtn.innerText = 'Calc and Add Score';
+    }
+    catch (e) {
+        alert(e);
+        PS = new PlayerSelector('PlayerSelector', 5, 4);
+    }
+}
+
+function calc(){
+    console.log('calc activated')
 }
