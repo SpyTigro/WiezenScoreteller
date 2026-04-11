@@ -1,4 +1,4 @@
-export default class PlayerSelector {
+export default class PlayerInitializer {
     readonly minP: number;
     readonly maxP: number;
     private currentP: number;
@@ -60,18 +60,9 @@ export default class PlayerSelector {
             let text = textInEl.value;
             if (!text || text.trim() === "") throw new Error('A player has no name');
             arr.push(text);
-
-            let textEl = document.createElement('p')
-            textEl.id = `${this.htmlId}-setter-text${i}`;
-            textEl.innerText = text;
-            textInEl.outerHTML = textEl.outerHTML;
         }
-        let addBtn = document.getElementById(`${this.htmlId}-addBtn`);
-        if (addBtn) addBtn.hidden = true;
-
-        let vdBtn = document.getElementById(`${this.htmlId}-vdBtn`);
-        if (vdBtn) vdBtn.hidden = true;
-
+        this.HTMLDiv.hidden = true
+        
         return arr;
     }
 
