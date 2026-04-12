@@ -1,10 +1,15 @@
-import ActionMode from "./actionSelector/ActionMode.js";
-import MiserieMode from "./actionSelector/MiserieMode.js";
-import ActionSelector from "./actionSelector/ActionSelector.js";
-import HistoryTable from "./historyTable/HistoryTable.js";
-import ModeInitializer from "./Initializers/ModeInitializer.js";
+
 import PlayerInitializer from "./Initializers/PlayerInitializer.js";
+import ModeInitializer from "./Initializers/ModeInitializer.js";
+
+import ActionSelector from "./actionSelector/ActionSelector.js";
+
+import HistoryTable from "./historyTable/HistoryTable.js";
+
+import ActionMode from "./actionSelector/ActionMode.js";
 import StandardMode from "./actionSelector/StandardMode.js";
+import MiserieMode from "./actionSelector/MiserieMode.js";
+import AbondanceMode from "./actionSelector/AbondanceMode.js";
 
 let PS: PlayerInitializer, MS: ModeInitializer, ST: HistoryTable, AS: ActionSelector;
 let players = new Array<string>;
@@ -14,8 +19,13 @@ let scores = new Array<number>;
 window.onload = function () {
     PS = new PlayerInitializer('PlayerSelector', 5, 4);
     MS = new ModeInitializer('ModeSelector', [new StandardMode('Standaard', 2, 1),
-                                              new MiserieMode('Miserie', 10),
-                                              new MiserieMode('Open Miserie', 20),
+                                              new MiserieMode('Miserie', 5),
+                                              new MiserieMode('Open Miserie', 10),
+                                              new AbondanceMode('Negen', 9, 5),
+                                              new AbondanceMode('Tien', 10, 5),
+                                              new AbondanceMode('Elf', 11, 5),
+                                              new AbondanceMode('Twaalf', 12, 5),
+                                              new AbondanceMode('Solo', 13, 15),
                                               ]);
     let actionBtn = document.getElementById('ActionButton');
     if (actionBtn) actionBtn.addEventListener('click', actionBtnClickHandler);

@@ -15,11 +15,11 @@ export default abstract class ActionMode{
         this.maxPlayers = maxPlayers;
     }
 
-    abstract getModeType(): string;
-
     abstract getScoreDelta(goingPlayers: Array<boolean>, deler: number): Array<number>;
 
     abstract renderSlagenSelector(htmlId: string): void;
+
+    abstract clone(name: string, base: number, overslag: number): ActionMode;
 
     protected getAndCheckGoingPlayerCount(goingPlayers: Array<boolean>, deler: number): number{
         let goingCount = 0;
@@ -46,5 +46,21 @@ export default abstract class ActionMode{
         }
         if(goingPlayers.length == 5) scores[deler] = 0;
         return scores;
+    }
+
+    protected addArrays(arr1: Array<number>, arr2: Array<number>): Array<number>{
+        let arr = Array<number>(Math.max(arr1.length, arr2.length));
+        for(let i = 0; i< arr.length; i++){
+            if(!arr1[i]) {
+                arr[i] = arr2[i];
+                continue;
+            }
+            if(!arr2[i]) {
+                arr[i] = arr1[i];
+                continue;
+            }
+            arr[i] = arr1[i] + arr2[i];
+        }
+        return arr;
     }
 }

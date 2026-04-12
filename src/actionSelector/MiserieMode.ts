@@ -1,26 +1,42 @@
 import ActionMode from "./ActionMode.js";
 import MiserieSlagenSelector from "./MiserieSlagenSelector.js";
 
-export default class MiserieMode extends ActionMode{
+export default class MiserieMode extends ActionMode {
     private slagenSelector: MiserieSlagenSelector = new MiserieSlagenSelector();
 
-    constructor(name: string, base: number){
+    constructor(name: string, base: number) {
         super(name, 0, base, 0, 1, 4);
     }
-    
-    getScoreDelta(goingPlayers: Array<boolean>, deler: number): Array<number> {
-        
-        let scoreDelta = new Array<number>(goingPlayers.length);
 
+    clone(name: string, base: number, overslag: number): ActionMode{
+        return new MiserieMode(name, base);
+    }
+
+    getScoreDelta(goingPlayers: Array<boolean>, deler: number): Array<number> {
+        this.getAndCheckGoingPlayerCount(goingPlayers, deler);
+        let scoreDelta = new Array<number>(goingPlayers.length);
+        let fiveP = goingPlayers.length == 5;
+        let succeeds = this.slagenSelector.getSucceeds();
+
+        for (let i = 0; i < goingPlayers.length; i++) {
+            if (fiveP && i == deler) continue;
+            if (goingPlayers[i]) {
+                let perP = succeeds[!fiveP || i < deler ? i : i - 1] ? this.base : -this.base;
+
+                let score = Array<number>(goingPlayers.length);
+                for(let i = 0; i < goingPlayers.length; i++){
+                    if(goingPlayers[i]) score[i] = 3*perP;
+                    else score[i] = -perP;
+                }
+                if(fiveP) score[deler] = 0;
+                scoreDelta = this.addArrays(scoreDelta, score);
+            }
+        }
 
         return scoreDelta;
     }
-    
-    getModeType(): string {
-        return 'miserieMode';
-    }
-    
-    renderSlagenSelector(htmlId: string){
+
+    renderSlagenSelector(htmlId: string) {
         this.slagenSelector.render(htmlId);
     }
 }

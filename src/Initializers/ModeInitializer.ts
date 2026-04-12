@@ -1,3 +1,4 @@
+import AbondanceMode from "../actionSelector/AbondanceMode.js";
 import ActionMode from "../actionSelector/ActionMode.js";
 import MiserieMode from "../actionSelector/MiserieMode.js";
 import StandardMode from "../actionSelector/StandardMode.js";
@@ -46,14 +47,7 @@ export default class ModeInitializer {
             if (!overInEl) continue;
             let over = Number(overInEl.value);
 
-            switch(this.presets[i].getModeType()){
-                case 'miserieMode':
-                    arr.push(new MiserieMode(text, base));
-                    break;
-                case 'standardMode':
-                    arr.push(new StandardMode(text, base, over));
-                    break;
-            }
+            arr.push(this.presets[i].clone(text, base, over));
         }
         this.HTMLDiv.hidden = true;
 
