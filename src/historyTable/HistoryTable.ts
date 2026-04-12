@@ -1,6 +1,6 @@
-export default class HistoryTable {
+export default class HistoryTable<T> {
     private readonly rows: number
-    private historyTable: Array<Array<Number>> = new Array<Array<number>>();
+    private historyTable: Array<Array<T>> = new Array<Array<T>>();
     private HTMLDiv: HTMLElement;
     private HTMLTable: HTMLTableElement;
     private htmlId: string;
@@ -29,14 +29,18 @@ export default class HistoryTable {
         this.HTMLDiv.appendChild(this.HTMLTable);
     }
 
-    addEntry(entries: Array<number>) {
+    addEntry(entries: Array<T>) {
         if (entries.length != this.rows) throw new RangeError('Not enough/Too much entries in Array');
 
         this.historyTable.push(entries);
         document.getElementById(`${this.htmlId}-header`)?.after(this.makeTableRowEntry(entries));
     }
 
-    private makeTableRowEntry(entries: Array<number>): HTMLTableRowElement {
+    getTable(): Array<Array<T>>{
+        return this.historyTable;
+    }
+
+    private makeTableRowEntry(entries: Array<T>): HTMLTableRowElement {
         let row = document.createElement('tr') as HTMLTableRowElement;
         entries.forEach(e => row.innerHTML += `<td>${e}</td>`);
         return row;

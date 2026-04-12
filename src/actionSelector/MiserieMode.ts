@@ -24,9 +24,9 @@ export default class MiserieMode extends ActionMode {
                 let perP = succeeds[!fiveP || i < deler ? i : i - 1] ? this.base : -this.base;
 
                 let score = Array<number>(goingPlayers.length);
-                for(let i = 0; i < goingPlayers.length; i++){
-                    if(goingPlayers[i]) score[i] = 3*perP;
-                    else score[i] = -perP;
+                for(let j = 0; j < goingPlayers.length; j++){
+                    if(i == j) score[j] = 3*perP;
+                    else score[j] = -perP;
                 }
                 if(fiveP) score[deler] = 0;
                 scoreDelta = this.addArrays(scoreDelta, score);

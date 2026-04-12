@@ -59,6 +59,10 @@ export default class ActionSelector {
         }
     }
 
+    getDeler(): number{
+        return this.deler;
+    }
+
     private makeModeSelector(): HTMLElement {
         let radioName = 'mode'
         let div = document.createElement('div');
