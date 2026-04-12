@@ -18,6 +18,7 @@ export default class StandardMode extends ActionMode{
         let threshold = 8;
         if(goingCount < 2) threshold = 5;
         let perP = this.over*(slagen - threshold) + (slagen >= threshold ? this.base : -this.base);
+        if(slagen == 13 || slagen == 0) perP *= 2;
         return this.perPlayerToScoreDelta(perP, goingPlayers, deler);
     }
 
