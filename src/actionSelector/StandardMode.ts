@@ -8,17 +8,17 @@ export default class StandardMode extends ActionMode{
         super(name, 0, base, overslag, 1, 2);
     }
     
-    clone(name: string, base: number, overslag: number): ActionMode{
+    clone(name: string = this.name, base: number = this.base, overslag: number = this.over): ActionMode{
         return new StandardMode(name, base, overslag);
     }
 
-    getScoreDelta(goingPlayers: Array<boolean>, deler: number): Array<number> {
+    getScoreDelta(goingPlayers: Array<boolean>, deler: number, trul: boolean): Array<number> {
         let goingCount = this.getAndCheckGoingPlayerCount(goingPlayers, deler);
         let slagen = this.slagenSelector.getSlagen();
         let threshold = 8;
         if(goingCount < 2) threshold = 5;
         let perP = this.over*(slagen - threshold) + (slagen >= threshold ? this.base : -this.base);
-        if(slagen == 13 || slagen == 0) perP *= 2;
+        if(slagen == 13 || perP < 0 || trul) perP *= 2;
         return this.perPlayerToScoreDelta(perP, goingPlayers, deler);
     }
 

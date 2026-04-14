@@ -1,8 +1,8 @@
 export default class PlayerInitializer {
     readonly minP: number;
     readonly maxP: number;
-    private currentP: number;
 
+    private currentP: number = 0;
     private deler: number = 0;
 
     private htmlId: string;
@@ -10,7 +10,6 @@ export default class PlayerInitializer {
 
     constructor(htmlId: string, maxP: number = 100, minP: number = 1) {
         this.minP = minP;
-        this.currentP = minP;
         this.maxP = maxP;
         this.htmlId = htmlId;
 
@@ -31,9 +30,15 @@ export default class PlayerInitializer {
                 alert('Max players reached');
                 return;
             }
-            document.getElementById(`${this.htmlId}-setter${this.currentP - 1}`)?.after(this.addPlayerSetter('', this.currentP));
-            this.currentP++;
+            this.addPlayerSetter('');
+            // document.getElementById(`${this.htmlId}-setter${this.currentP - 1}`)?.after(this.addPlayerSetter('', this.currentP));
+            // this.currentP++;
         });
+
+        this.HTMLDiv.appendChild(addBtn);
+        for (let i = 0; i < minP; i++) {
+            this.addPlayerSetter('');
+        }
 
         let vdBtn = document.createElement('button');
         vdBtn.id = `${htmlId}-vdBtn`;
@@ -41,13 +46,6 @@ export default class PlayerInitializer {
         vdBtn.addEventListener('click', e => {
             this.nextDeler();
         });
-
-        this.HTMLDiv.appendChild(addBtn);
-        for (let i = 0; i < minP; i++) {
-            let label = '';
-            if (!i) label = 'Deler';
-            this.HTMLDiv.appendChild(this.addPlayerSetter(label, i));
-        }
         this.HTMLDiv.appendChild(vdBtn);
     }
 
@@ -62,12 +60,27 @@ export default class PlayerInitializer {
             arr.push(text);
         }
         this.HTMLDiv.hidden = true
-        
+
         return arr;
     }
 
     getDeler(): number {
         return this.deler;
+    }
+
+    setPlayers(players: Array<string>) {
+        for (let i = 0; i < Math.max(this.currentP, players.length); i++) {
+            let textInEl = document.getElementById(`${this.htmlId}-setter-text${i}`) as HTMLInputElement;
+
+            if (!textInEl) this.addPlayerSetter(players[i]);
+            else if (players[i]) textInEl.value = players[i]
+        }
+    }
+
+    setDeler(deler: number) {
+        while (this.deler != deler) {
+            this.nextDeler()
+        }
     }
 
     private nextDeler() {
@@ -81,7 +94,9 @@ export default class PlayerInitializer {
         }
     }
 
-    private addPlayerSetter(label: string, i: number): HTMLElement {
+    private addPlayerSetter(name: string) {
+        let i = this.currentP;
+
         let div = document.createElement('div');
         div.id = `${this.htmlId}-setter${i}`;
         div.style.display = 'flex';
@@ -90,6 +105,7 @@ export default class PlayerInitializer {
 
         let textinEl = document.createElement('input');
         textinEl.id = `${this.htmlId}-setter-text${i}`;
+        textinEl.value = name;
 
         let labelEl = document.createElement('label') as HTMLLabelElement;
         labelEl.htmlFor = `${this.htmlId}-setter-text${i}`;
@@ -103,6 +119,11 @@ export default class PlayerInitializer {
 
         div.appendChild(labelEl);
         div.appendChild(textinEl);
-        return div;
+
+        let prevdiv = document.getElementById(`${this.htmlId}-setter${i-1}`);
+        if(prevdiv) prevdiv.after(div);
+        else this.HTMLDiv.appendChild(div);
+
+        this.currentP++;
     }
 }

@@ -15,7 +15,7 @@ export default abstract class ActionMode{
         this.maxPlayers = maxPlayers;
     }
 
-    abstract getScoreDelta(goingPlayers: Array<boolean>, deler: number): Array<number>;
+    abstract getScoreDelta(goingPlayers: Array<boolean>, deler: number, trul: boolean): Array<number>;
 
     abstract renderSlagenSelector(htmlId: string): void;
 

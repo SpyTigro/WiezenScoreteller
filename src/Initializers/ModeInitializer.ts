@@ -1,7 +1,4 @@
-import AbondanceMode from "../actionSelector/AbondanceMode.js";
 import ActionMode from "../actionSelector/ActionMode.js";
-import MiserieMode from "../actionSelector/MiserieMode.js";
-import StandardMode from "../actionSelector/StandardMode.js";
 
 export default class ModeInitializer {
     private presets: Array<ActionMode>;

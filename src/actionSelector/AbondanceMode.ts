@@ -8,7 +8,7 @@ export default class AbondanceMode extends ActionMode{
         super(name, threshold, base, 0, 1, 1);
     }
     
-    clone(name: string, base: number, overslag: number): ActionMode{
+    clone(name: string = this.name, base: number = this.base): ActionMode{
         return new AbondanceMode(name, this.threshold, base);
     }
 

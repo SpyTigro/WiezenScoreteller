@@ -13,22 +13,23 @@ import AbondanceMode from "./actionSelector/AbondanceMode.js";
 
 let PS: PlayerInitializer, MS: ModeInitializer, ST: HistoryTable<number>, AS: ActionSelector;
 let players = new Array<string>;
-let modes = new Array<ActionMode>;
+let modes: Array<ActionMode> = [new StandardMode('Standaard', 2, 1),
+new MiserieMode('Miserie', 5),
+new MiserieMode('Open Miserie', 10),
+new AbondanceMode('Negen', 9, 5),
+new AbondanceMode('Tien', 10, 5),
+new AbondanceMode('Elf', 11, 5),
+new AbondanceMode('Twaalf', 12, 5),
+new AbondanceMode('Solo', 13, 15),
+];
 let scores = new Array<number>;
 
-let loadedFile = undefined;
+let loadedFile: File | undefined = undefined;
 
 window.onload = function () {
     PS = new PlayerInitializer('PlayerSelector', 5, 4);
-    MS = new ModeInitializer('ModeSelector', [new StandardMode('Standaard', 2, 1),
-    new MiserieMode('Miserie', 5),
-    new MiserieMode('Open Miserie', 10),
-    new AbondanceMode('Negen', 9, 5),
-    new AbondanceMode('Tien', 10, 5),
-    new AbondanceMode('Elf', 11, 5),
-    new AbondanceMode('Twaalf', 12, 5),
-    new AbondanceMode('Solo', 13, 15),
-    ]);
+    MS = new ModeInitializer('ModeSelector', modes);
+
     let actionBtn = document.getElementById('ActionButton');
     if (actionBtn) actionBtn.addEventListener('click', actionBtnClickHandler);
     let saveloadBtn = document.getElementById('SaveLoadBtn');
@@ -46,17 +47,21 @@ function start(actionBtn: HTMLElement) {
         players = PS.lock();
         modes = MS.lock();
 
-        ST = new HistoryTable<number>('ScoreTable', players);
+        if (!ST) {
+            ST = new HistoryTable<number>('ScoreTable', players);
 
-        players.forEach(p => scores.push(0));
-        ST.addEntry(scores);
-
+            players.forEach(p => scores.push(0));
+            ST.addEntry(scores);
+        }
         AS = new ActionSelector('ActionSelector', players, modes, PS.getDeler());
 
         actionBtn.innerText = 'Calc and Add Score';
 
         let saveloadBtn = document.getElementById('SaveLoadBtn');
         if (saveloadBtn) saveloadBtn.innerText = 'Save';
+
+        let fileInEl = document.getElementById('fileLoad') as HTMLInputElement;
+        if (fileInEl) fileInEl.hidden = true;
     }
     catch (e) {
         alert(e);
@@ -90,8 +95,8 @@ function saveLoadBtnClickHandler(e: Event) {
 function save() {
     let saveObj = {
         players: players,
-        deler: AS.getDeler(),
         modes: modes,
+        deler: PS.getDeler(),
         scoreTable: ST.getTable(),
     }
 
@@ -116,20 +121,20 @@ function save() {
         }).catch((err: any) => {
             alert('Save cancelled or failed.');
         });
-    } else {
-        // Fallback: download as file
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'wiezen_score.json';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }, 0);
+        return;
     }
+    // Fallback: download as file
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'wiezen_score.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 0);
 }
 
 function load(btn: HTMLElement) {
@@ -148,23 +153,23 @@ function load(btn: HTMLElement) {
                 alert('invalid file');
                 return;
             }
-            players = loadObj.players;
-            modes = loadObj.modes;
+
+            players = loadObj.players
+            PS.setPlayers(players);
+            PS.setDeler(loadObj.deler);
+
+            for (let i = 0; i < modes.length; i++) {
+                let loadedMode = loadObj.modes[i]
+                modes[i] = modes[i].clone(loadedMode.name, loadedMode.base, loadedMode.over);
+            }
+            MS = new ModeInitializer('ModeSelector', modes);
+
             let tempScores = loadObj.scoreTable as Array<Array<number>>;
 
             ST = new HistoryTable<number>('ScoreTable', players);
 
             tempScores.forEach(e => ST.addEntry(e));
-
-            AS = new ActionSelector('ActionSelector', players, modes, loadObj.deler);
-
-            let actionBtn = document.getElementById('ActionButton');
-            if (actionBtn) actionBtn.innerText = 'Calc and Add Score';
-
-            let saveloadBtn = document.getElementById('SaveLoadBtn');
-            if (saveloadBtn) saveloadBtn.innerText = 'Save';
-
-            fileInEl.hidden = true;
+            scores = tempScores[tempScores.length - 1];
 
             loadedFile = file;
         } catch (er) {

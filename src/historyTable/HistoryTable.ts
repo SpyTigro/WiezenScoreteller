@@ -32,7 +32,7 @@ export default class HistoryTable<T> {
     addEntry(entries: Array<T>) {
         if (entries.length != this.rows) throw new RangeError('Not enough/Too much entries in Array');
 
-        this.historyTable.push(entries);
+        this.historyTable.push(entries.copyWithin(0, 0).slice());
         document.getElementById(`${this.htmlId}-header`)?.after(this.makeTableRowEntry(entries));
     }
 

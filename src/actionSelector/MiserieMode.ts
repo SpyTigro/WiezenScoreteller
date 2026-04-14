@@ -8,11 +8,11 @@ export default class MiserieMode extends ActionMode {
         super(name, 0, base, 0, 1, 4);
     }
 
-    clone(name: string, base: number, overslag: number): ActionMode{
+    clone(name: string = this.name, base: number = this.base): ActionMode{
         return new MiserieMode(name, base);
     }
 
-    getScoreDelta(goingPlayers: Array<boolean>, deler: number): Array<number> {
+    getScoreDelta(goingPlayers: Array<boolean>, deler: number, trul: boolean): Array<number> {
         this.getAndCheckGoingPlayerCount(goingPlayers, deler);
         let scoreDelta = new Array<number>(goingPlayers.length);
         let fiveP = goingPlayers.length == 5;
@@ -22,7 +22,7 @@ export default class MiserieMode extends ActionMode {
             if (fiveP && i == deler) continue;
             if (goingPlayers[i]) {
                 let perP = succeeds[!fiveP || i < deler ? i : i - 1] ? this.base : -this.base;
-
+                if(trul) perP *= 2;
                 let score = Array<number>(goingPlayers.length);
                 for(let j = 0; j < goingPlayers.length; j++){
                     if(i == j) score[j] = 3*perP;

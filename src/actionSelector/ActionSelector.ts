@@ -7,6 +7,7 @@ export default class ActionSelector {
 
     private checkedP: Array<boolean>;
     private checkedM: number = 0;
+    private trul: boolean = false;
     private slagen: number = 0;
 
     private htmlId: string;
@@ -43,7 +44,7 @@ export default class ActionSelector {
     }
 
     getScoreDelta(): Array<number> {
-        let deltaScores = this.modes[this.checkedM].getScoreDelta(this.checkedP, this.deler);
+        let deltaScores = this.modes[this.checkedM].getScoreDelta(this.checkedP, this.deler, this.trul);
         this.nextDeler();
         return deltaScores;
     }
@@ -59,13 +60,31 @@ export default class ActionSelector {
         }
     }
 
-    getDeler(): number{
+    getDeler(): number {
         return this.deler;
     }
 
     private makeModeSelector(): HTMLElement {
-        let radioName = 'mode'
+        const radioName = 'mode'
         let div = document.createElement('div');
+
+        const checkEl = document.createElement('input');
+        checkEl.type = 'checkbox';
+        checkEl.id = `${this.htmlId}-trul-check`;
+        checkEl.value = 'trul';
+        checkEl.addEventListener('change', e => {
+            this.trul = checkEl.checked;
+        });
+
+        const labelEl = document.createElement('label');
+        labelEl.className = 'NodeRadio-label';
+        labelEl.textContent = 'Trul';
+        labelEl.setAttribute('for', checkEl.id);
+        labelEl.style.userSelect = 'none';
+        labelEl.style.pointerEvents = 'auto';
+
+        div.appendChild(checkEl);
+        div.appendChild(labelEl);
 
         for (let i = 0; i < this.modes.length; i++) {
             let l = this.modes[i].name;
