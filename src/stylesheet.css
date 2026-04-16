@@ -1,19 +1,113 @@
 body {
+    background-color: white;
     font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
 }
 
+h1 {
+    font-size: 24px;
+}
+
+h1,
 p {
     margin: 0;
 }
 
+button {
+    background-color: lightgray;
+    border: 2px solid lightgray;
+    border-radius: 100px;
+    color: black;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover{
+    border: 2px solid red;
+}
+
+input{
+    font-size: 18px;
+    border: 2px solid lightgray;
+    border-radius: 100px;
+    padding: 1px 6px;
+}
+
+input[type="range"]{
+    accent-color: red;
+    padding: 0px;
+    border: 0px;
+    width: 200px;
+    
+}
+
+input[type="radio"], input[type="checkbox"]{
+    display: none;
+}
+
+.checkDiv{
+    display: flex;
+    margin: 2px;
+}
+
+.check, .checked{
+    border: 2px solid lightgray;
+    border-radius: 100px;
+    padding: 1px 6px;
+}
+
+.check:hover, .checked:hover{
+    border: 2px solid black;
+}
+
+.checked{
+    border: 2px solid red;
+}
+
+input[type="file"] {
+    display: none;
+    /* border: 5px solid green;
+    border-radius: 100px;
+    padding: 2px; */
+}
+
+.fileLoad {
+    background-color: lightgray;
+    border: 2px solid lightgray;
+    border-radius: 100px;
+    display: inline-flex;
+    align-items: center;
+    color: black;
+}
+
+.fileLoadBtn {
+    background-color: red;
+    border-radius: 100px;
+    /* color: black; */
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    display: inline-block;
+    padding: 1px 6px;
+}
+
+.fileLoadLabel {
+    border-radius: 100px;
+    cursor: pointer;
+    display: inline-block;
+    padding: 1px 6px;
+
+}
+
 .sidebar {
+    background-color: rgb(239, 239, 239);
     width: 40%;
     position: fixed;
     padding: 1% 1%;
     margin: 1%;
     top: 0;
     left: 0;
-    Border: 5px solid grey;
+    Border: 5px solid lightgray;
     border-radius: 25px;
     border-width: auto;
 }
@@ -26,11 +120,11 @@ p {
     content: "";
     position: absolute;
     left: -32%;
-    top: -12%;
+    top: -10%;
     /* directly below the element */
-    width: 20px;
+    width: 24px;
     /* adjust size as needed */
-    height: 20px;
+    height: 24px;
     background: red;
     border-radius: 50%;
     z-index: -1;
@@ -51,7 +145,11 @@ th,
 td {
     padding: 10px;
     text-align: center;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
+    border-left: 2px solid gray;
+    border-right: 2px solid gray;
     border-collapse: collapse;
+}
+
+[hidden] {
+    display: none !important;
 }

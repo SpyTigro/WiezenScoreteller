@@ -36,7 +36,7 @@ export default class MiserieMode extends ActionMode {
         return scoreDelta;
     }
 
-    renderSlagenSelector(htmlId: string) {
-        this.slagenSelector.render(htmlId);
+    renderSlagenSelector(htmlId: string, players: Array<string>) {
+        this.slagenSelector.render(htmlId, players);
     }
 }

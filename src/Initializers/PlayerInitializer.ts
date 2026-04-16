@@ -42,7 +42,7 @@ export default class PlayerInitializer {
 
         let vdBtn = document.createElement('button');
         vdBtn.id = `${htmlId}-vdBtn`;
-        vdBtn.innerText = 'Volgende Deler';
+        vdBtn.innerText = 'Next Deler';
         vdBtn.addEventListener('click', e => {
             this.nextDeler();
         });

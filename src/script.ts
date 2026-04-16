@@ -26,14 +26,30 @@ let scores = new Array<number>;
 
 let loadedFile: File | undefined = undefined;
 
+let actionBtn: HTMLButtonElement,
+    saveloadBtn: HTMLButtonElement,
+    fileInEl: HTMLInputElement,
+    fileInDiv: HTMLDivElement;
+
 window.onload = function () {
     PS = new PlayerInitializer('PlayerSelector', 5, 4);
     MS = new ModeInitializer('ModeSelector', modes);
 
-    let actionBtn = document.getElementById('ActionButton');
+    actionBtn = document.getElementById('ActionButton') as HTMLButtonElement;
     if (actionBtn) actionBtn.addEventListener('click', actionBtnClickHandler);
-    let saveloadBtn = document.getElementById('SaveLoadBtn');
+    saveloadBtn = document.getElementById('SaveLoadBtn') as HTMLButtonElement;
     if (saveloadBtn) saveloadBtn.addEventListener('click', saveLoadBtnClickHandler);
+
+    fileInEl = document.getElementById('fileLoadInput') as HTMLInputElement;
+    if (fileInEl) fileInEl.addEventListener('change', e => {
+        if (fileInEl.files) {
+            let fileLoadLabel = document.getElementById('fileLoadLabel');
+            if (fileLoadLabel)
+                fileLoadLabel.innerText = fileInEl.files[0].name;
+        }
+    })
+
+    fileInDiv = document.getElementById('fileLoad') as HTMLDivElement;
 }
 
 function actionBtnClickHandler(e: Event) {
@@ -55,13 +71,11 @@ function start(actionBtn: HTMLElement) {
         }
         AS = new ActionSelector('ActionSelector', players, modes, PS.getDeler());
 
-        actionBtn.innerText = 'Calc and Add Score';
+        if(actionBtn) actionBtn.innerText = 'Calc and Add Score';
 
-        let saveloadBtn = document.getElementById('SaveLoadBtn');
-        if (saveloadBtn) saveloadBtn.innerText = 'Save';
+        if(saveloadBtn) saveloadBtn.innerText = 'Save';
 
-        let fileInEl = document.getElementById('fileLoad') as HTMLInputElement;
-        if (fileInEl) fileInEl.hidden = true;
+        if(fileInDiv) fileInDiv.hidden = true;
     }
     catch (e) {
         alert(e);
@@ -138,11 +152,10 @@ function save() {
 }
 
 function load(btn: HTMLElement) {
-    let fileInEl = document.getElementById('fileLoad') as HTMLInputElement;
     if (!fileInEl) return;
 
-    if (!fileInEl.files) return;
-    const file = fileInEl.files[0];
+    const file = fileInEl.files? fileInEl.files[0]: undefined;
+    if(!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
         try {

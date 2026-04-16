@@ -34,13 +34,12 @@ export default class ActionSelector {
             this.HTMLDiv.appendChild(this.makePlayerCheckDiv(p, players.indexOf(p)));
         });
 
-        this.HTMLDiv.append('Mode:');
+
+        let titleEl = document.createElement('h1');
+        titleEl.innerText = 'Modes:';
+        this.HTMLDiv.appendChild(titleEl);
         this.HTMLDiv.appendChild(this.makeModeSelector());
 
-        let slagenSelectorDiv = document.createElement('div')
-        slagenSelectorDiv.id = `${htmlId}-slagenSelector`;
-        this.HTMLDiv.appendChild(slagenSelectorDiv);
-        this.modes[this.checkedM].renderSlagenSelector(slagenSelectorDiv.id);
     }
 
     getScoreDelta(): Array<number> {
@@ -65,98 +64,86 @@ export default class ActionSelector {
     }
 
     private makeModeSelector(): HTMLElement {
-        const radioName = 'mode'
+        const radioName = 'mode';
         let div = document.createElement('div');
+        div.id = `${this.htmlId}-modes`;
+        div.className = 'Selector';
+
+        const DivEl = document.createElement('div');
+        DivEl.className = 'checkDiv';
 
         const checkEl = document.createElement('input');
         checkEl.type = 'checkbox';
-        checkEl.id = `${this.htmlId}-trul-check`;
+        checkEl.id = `${div.id}-trul-check`;
         checkEl.value = 'trul';
         checkEl.addEventListener('change', e => {
             this.trul = checkEl.checked;
         });
 
         const labelEl = document.createElement('label');
-        labelEl.className = 'NodeRadio-label';
+        if (checkEl.checked) labelEl.className = 'checked';
+        else labelEl.className = 'check';
         labelEl.textContent = 'Trul';
-        labelEl.setAttribute('for', checkEl.id);
+        labelEl.htmlFor = checkEl.id;
         labelEl.style.userSelect = 'none';
         labelEl.style.pointerEvents = 'auto';
 
-        div.appendChild(checkEl);
-        div.appendChild(labelEl);
+        checkEl.addEventListener('change', e => {
+            if (checkEl.checked) {
+                labelEl.className = 'checked';
+            }
+            else {
+                labelEl.className = 'check';
+            }
+        })
+
+        DivEl.appendChild(checkEl);
+        DivEl.appendChild(labelEl);
+        div.appendChild(DivEl);
+
+        let slagenSelectorDiv = document.createElement('div')
+        slagenSelectorDiv.id = `${div.id}-slagenSelector`;
 
         for (let i = 0; i < this.modes.length; i++) {
             let l = this.modes[i].name;
             if (!l) l = "";
 
             const DivEl = document.createElement('div');
+            DivEl.className = 'checkDiv';
 
             const RadioEl = document.createElement('input');
             RadioEl.type = 'radio';
-            RadioEl.className = 'NodeRadio';
             RadioEl.name = `${div.id}-${radioName}`;
             RadioEl.id = `${div.id}-${l}`;
             RadioEl.value = l;
-            if (i == this.checkedM)
-                RadioEl.checked = true;
+
+            const radiolabelEl = document.createElement('label');
+            if (RadioEl.checked) radiolabelEl.className = 'checked';
+            else radiolabelEl.className = 'check';
+            radiolabelEl.textContent = l;
+            radiolabelEl.htmlFor = RadioEl.id;
 
             RadioEl.addEventListener('change', () => {
-                if (RadioEl.checked) {
-                    this.checkedM = i;
-                    this.modes[i].renderSlagenSelector(`${this.htmlId}-slagenSelector`);
-                }
+                const allLabels = div.querySelectorAll('label');
+                allLabels.forEach(l => {
+                    l.className = 'check';
+                    if ((document.getElementById(l.htmlFor) as HTMLInputElement)?.checked) {
+                        l.className = 'checked';
+                    }
+                    if (RadioEl.checked) {
+                        this.checkedM = i;
+                        this.modes[this.checkedM].renderSlagenSelector(slagenSelectorDiv.id, this.players);
+                    }
+                })
             });
 
-            const labelEl = document.createElement('label');
-            labelEl.className = 'NodeRadio-label';
-            labelEl.textContent = l;
-            labelEl.setAttribute('for', `${div.id}-${l}`);
-            labelEl.style.userSelect = 'none';
-            labelEl.style.pointerEvents = 'auto';
-
             DivEl.appendChild(RadioEl);
-            DivEl.appendChild(labelEl);
+            DivEl.appendChild(radiolabelEl);
             div.appendChild(DivEl);
         };
-        return div;
-    }
 
-    private makeSlagenSlider(): HTMLElement {
-        let div = document.createElement('div');
+        div.appendChild(slagenSelectorDiv);
 
-        let numInEl = document.createElement('input');
-        numInEl.type = 'number';
-        numInEl.id = `${this.htmlId}-slagen-num`;
-        numInEl.min = '0';
-        numInEl.max = '13';
-        numInEl.value = String(this.slagen);
-
-        let sliderEl = document.createElement('input');
-        sliderEl.type = 'range';
-        sliderEl.id = `${this.htmlId}-slagen-slider`;
-        sliderEl.min = '0';
-        sliderEl.max = '13';
-        sliderEl.value = String(this.slagen);
-
-        numInEl.addEventListener('input', e => {
-            this.slagen = Number(numInEl.value);
-            sliderEl.value = String(this.slagen);
-        });
-        sliderEl.addEventListener('input', e => {
-            this.slagen = Number(sliderEl.value);
-            numInEl.value = String(this.slagen);
-        });
-
-        let labelEl = document.createElement('label');
-        labelEl.htmlFor = numInEl.id;
-        labelEl.innerText = 'Slagen gehaald:';
-        labelEl.style.marginRight = '5px';
-
-        div.appendChild(labelEl);
-        div.appendChild(numInEl);
-        div.appendChild(document.createElement('br'));
-        div.appendChild(sliderEl);
         return div;
     }
 
@@ -170,9 +157,6 @@ export default class ActionSelector {
         checkEl.type = 'checkbox';
         checkEl.id = `${this.htmlId}-check-${name}`;
         checkEl.value = name;
-        checkEl.addEventListener('change', e => {
-            this.checkedP[i] = checkEl.checked;
-        });
 
         let ilabelEl = document.createElement('label') as HTMLLabelElement;
         ilabelEl.htmlFor = checkEl.id;
@@ -184,8 +168,14 @@ export default class ActionSelector {
         let labelEl = document.createElement('label');
         labelEl.htmlFor = checkEl.id;
         labelEl.innerText = name;
+        if (checkEl.checked) labelEl.className = 'checked';
+        else labelEl.className = 'check';
 
-
+        checkEl.addEventListener('change', e => {
+            this.checkedP[i] = checkEl.checked;
+            if (checkEl.checked) labelEl.className = 'checked';
+            else labelEl.className = 'check';
+        });
 
         div.appendChild(ilabelEl);
         div.appendChild(checkEl);

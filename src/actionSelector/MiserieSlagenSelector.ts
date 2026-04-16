@@ -1,7 +1,7 @@
 export default class MiserieSlagenSelector {
     private checkedP: Array<boolean> = new Array<boolean>(4);
 
-    render(htmlId: string) {
+    render(htmlId: string, players: Array<string>) {
         let div = document.getElementById(htmlId);
         if (!div) {
             div = document.createElement('div');
@@ -9,9 +9,14 @@ export default class MiserieSlagenSelector {
             document.body.appendChild(div);
         }
         div.innerHTML = '';
+        div.className = 'Selector';
 
-        for (let i = 0; i < 4; i++) {
-            div.appendChild(this.makeCheckDiv(htmlId, i));
+        const pEl = document.createElement('p');
+        pEl.innerText = 'Who succeeded?';
+        div.appendChild(pEl);
+
+        for (let i = 0; i < players.length; i++) {
+            div.appendChild(this.makeCheckDiv(htmlId, players[i], i));
         }
     }
 
@@ -19,7 +24,7 @@ export default class MiserieSlagenSelector {
         return this.checkedP;
     }
 
-    private makeCheckDiv(htmlId: string, i: number): HTMLElement {
+    private makeCheckDiv( htmlId: string, name: string, i: number): HTMLElement {
         let div = document.createElement('div');
         div.style.display = 'flex';
         div.style.flexDirection = 'row';
@@ -27,22 +32,23 @@ export default class MiserieSlagenSelector {
 
         let checkEl = document.createElement('input');
         checkEl.type = 'checkbox';
-        checkEl.id = `${htmlId}-check-${i}`;
-        checkEl.checked = this.checkedP[i];
+        checkEl.id = `${htmlId}-check-${name}`;
+        checkEl.value = name;
+
+        let labelEl = document.createElement('label');
+        labelEl.htmlFor = checkEl.id;
+        labelEl.innerText = name;
+        if (checkEl.checked) labelEl.className = 'checked';
+        else labelEl.className = 'check';
+
         checkEl.addEventListener('change', e => {
             this.checkedP[i] = checkEl.checked;
+            if (checkEl.checked) labelEl.className = 'checked';
+            else labelEl.className = 'check';
         });
 
-        let ilabelEl = document.createElement('label') as HTMLLabelElement;
-        ilabelEl.htmlFor = checkEl.id;
-        ilabelEl.id = `${htmlId}-check-ilabel${i}`;
-        ilabelEl.style.marginRight = '5px';
-        ilabelEl.innerText = `${i + 1}.`;
-
-
-
-        div.appendChild(ilabelEl);
         div.appendChild(checkEl);
+        div.appendChild(labelEl);
         return div
     }
 }

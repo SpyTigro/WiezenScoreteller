@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Wiezen Scorebord</title>
-        <link rel="stylesheet" href="./src/stylesheet.css">
-        <script type="module" src="./dist/script.js"></script>
-    </head>
-    <body>
-        <div class="sidebar">
-            <p>Players:</p>
-            <div class="Selector" id="PlayerSelector"></div>
-            <div class="Selector" id="ModeSelector"></div>
-            <div class="Selector" id="ActionSelector"></div>
-            <button id="ActionButton">Start</button>
-            
-            <button id="SaveLoadBtn">Load</button>
-            <input type="file" id="fileLoad" accept=".json">
+
+<head>
+    <title>Wiezen Scorebord</title>
+    <link rel="stylesheet" href="./src/stylesheet.css">
+    <script type="module" src="./dist/script.js"></script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h1>Players:</h1>
+        <div class="Selector" id="PlayerSelector"></div>
+        <div class="Selector" id="ModeSelector"></div>
+        <div class="Selector" id="ActionSelector"></div>
+        <button id="ActionButton">Start</button>
+
+        <button id="SaveLoadBtn">Load</button>
+        <div id="fileLoad" class="fileLoad">
+            <label for="fileLoadInput" id="fileLoadBtn" class="fileLoadBtn">Choose File</label>
+            <input type="file" id="fileLoadInput" accept=".json">
+            <label for="fileLoadInput" id="fileLoadLabel" class="fileLoadLabel">No file chosen</label>
         </div>
-        <div class="main">
-            <div class="HistoryTable" id="ScoreTable"></div>
-        </div>
-    </body>
+    </div>
+    <div class="main">
+        <div class="HistoryTable" id="ScoreTable"></div>
+    </div>
+</body>
+
 </html>

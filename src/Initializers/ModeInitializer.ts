@@ -19,7 +19,7 @@ export default class ModeInitializer {
         div.innerHTML = '';
         this.HTMLDiv = div;
 
-        let titleEl = document.createElement('p');
+        let titleEl = document.createElement('h1');
         titleEl.innerText = 'Modes:';
         this.HTMLDiv.appendChild(titleEl);
 

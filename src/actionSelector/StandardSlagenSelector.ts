@@ -9,16 +9,17 @@ export default class StandardSlagenSelector{
             document.body.appendChild(div);
         }
         div.innerHTML = '';
+        div.className = '';
 
-        div.appendChild(this.makeSlagenSlider(htmlId, 'Slagen gehaald'));
+        this.makeSlagenSlider(htmlId, 'Slagen gehaald', div);
     }
 
     getSlagen(): number {
         return this.slagen;
     }
 
-    private makeSlagenSlider(htmlId: string, label: string): HTMLElement {
-        let div = document.createElement('div');
+    private makeSlagenSlider(htmlId: string, label: string, div?: HTMLElement): HTMLElement {
+        if(!div) div = document.createElement('div');
 
         let numInEl = document.createElement('input');
         numInEl.type = 'number';
@@ -36,6 +37,9 @@ export default class StandardSlagenSelector{
 
         numInEl.addEventListener('input', e => {
             this.slagen = Number(numInEl.value);
+            if(this.slagen > 13) this.slagen = 13;
+            else if(this.slagen < 0) this.slagen = 0;
+            numInEl.value = String(this.slagen);
             sliderEl.value = String(this.slagen);
         });
         sliderEl.addEventListener('input', e => {

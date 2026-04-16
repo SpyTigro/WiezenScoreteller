@@ -17,7 +17,7 @@ export default abstract class ActionMode{
 
     abstract getScoreDelta(goingPlayers: Array<boolean>, deler: number, trul: boolean): Array<number>;
 
-    abstract renderSlagenSelector(htmlId: string): void;
+    abstract renderSlagenSelector(htmlId: string, players: Array<string>): void;
 
     abstract clone(name: string, base: number, overslag: number): ActionMode;
 
