@@ -12,8 +12,9 @@ export default class AbondanceMode extends ActionMode{
         return new AbondanceMode(name, this.threshold, base);
     }
 
-    getScoreDelta(goingPlayers: Array<boolean>, deler: number): Array<number> {
+    getScoreDelta(goingPlayers: Array<boolean>, deler: number, trul: boolean): Array<number> {
         let goingCount = this.getAndCheckGoingPlayerCount(goingPlayers, deler);
+        if(trul) throw new Error('dit mag niet boven trul');
         let slagen = this.slagenSelector.getSlagen();
         let perP = slagen >= this.threshold ? this.base : -this.base;
         return this.perPlayerToScoreDelta(perP, goingPlayers, deler);
