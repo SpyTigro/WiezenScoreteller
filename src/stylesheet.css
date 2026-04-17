@@ -101,10 +101,12 @@ input[type="file"] {
 
 .sidebar {
     background-color: rgb(239, 239, 239);
-    width: 40%;
+    display: inline-block;
+    min-width: 450px;
+    max-width: 600px;
     position: fixed;
-    padding: 1% 1%;
-    margin: 1%;
+    padding: 10px 10px;
+    margin: 10px;
     top: 0;
     left: 0;
     Border: 5px solid lightgray;
@@ -136,8 +138,8 @@ input[type="file"] {
 }
 
 .main {
-    padding: 2%;
-    margin-left: 50%;
+    padding: 50px;
+    margin-left: 650px;
 }
 
 .HistoryTable table,

@@ -57,6 +57,7 @@ export default class ModeInitializer {
         div.style.display = 'flex';
         div.style.flexDirection = 'row';
         div.style.alignItems = 'center'; // vertically center them
+        div.style.width = 'fit-content';
 
         let textInEl = document.createElement('input');
         textInEl.value = values? values.name : '';
