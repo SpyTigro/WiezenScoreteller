@@ -52,34 +52,55 @@ export default class ModeInitializer {
     }
 
     private addModeSetter(i: number, values?: ActionMode): HTMLElement {
-        let div = document.createElement('div');
+        const div = document.createElement('div');
         div.id = `${this.htmlId}-setter${i}`;
-        div.style.display = 'flex';
-        div.style.flexDirection = 'row';
-        div.style.alignItems = 'center'; // vertically center them
-        div.style.width = 'fit-content';
+        // div.style.display = 'flex';
+        // div.style.flexDirection = 'row';
+        // div.style.alignItems = 'center'; // vertically center them
 
-        let textInEl = document.createElement('input');
-        textInEl.value = values? values.name : '';
+        const textInEl = document.createElement('input');
+        textInEl.value = values ? String(values.name) : '';
         textInEl.id = `${this.htmlId}-setter-text${i}`;
         textInEl.style.marginRight = '2px';
 
-        let baseInEl = document.createElement('input');
+        const rowDiv = document.createElement('div');
+        rowDiv.id = `${this.htmlId}-setter${i}`;
+        rowDiv.style.display = 'flex';
+        rowDiv.style.flexDirection = 'row';
+        rowDiv.style.alignItems = 'center'; // vertically center them
+        rowDiv.style.marginTop = '2px';
+
+        const baseInEl = document.createElement('input');
         baseInEl.type = 'number';
         baseInEl.value = values? String(values.base) : '';
         baseInEl.id = `${this.htmlId}-setter-base${i}`;
         baseInEl.style.width = '10%';
         baseInEl.style.marginRight = '2px';
+
+        const baseLabelEl = document.createElement('label') as HTMLLabelElement;
+        baseLabelEl.htmlFor = baseInEl.id;
+        baseLabelEl.id = `${this.htmlId}-setter-baseLabel${i}`;
+        baseLabelEl.innerText = `Base:`;
+        baseLabelEl.style.marginRight = '5px';
         
-        let overInEl = document.createElement('input');
+        const overInEl = document.createElement('input');
         overInEl.type = 'number';
         overInEl.value = values? String(values.over) : '';
         overInEl.id = `${this.htmlId}-setter-over${i}`;
         overInEl.style.width = '10%';
 
+        const overLabelEl = document.createElement('label') as HTMLLabelElement;
+        overLabelEl.htmlFor = overInEl.id;
+        overLabelEl.id = `${this.htmlId}-setter-overLabel${i}`;
+        overLabelEl.innerText = `Over:`;
+        overLabelEl.style.marginRight = '5px';
+
         div.appendChild(textInEl);
-        div.appendChild(baseInEl);
-        div.appendChild(overInEl);
+        rowDiv.appendChild(baseLabelEl);
+        rowDiv.appendChild(baseInEl);
+        rowDiv.appendChild(overLabelEl);
+        rowDiv.appendChild(overInEl);
+        div.appendChild(rowDiv);
         return div;
     }
 }

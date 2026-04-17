@@ -110,7 +110,6 @@ export default class PlayerInitializer {
         let labelEl = document.createElement('label') as HTMLLabelElement;
         labelEl.htmlFor = `${this.htmlId}-setter-text${i}`;
         labelEl.id = `${this.htmlId}-setter-label${i}`;
-
         labelEl.innerText = `${i + 1}.`;
         labelEl.style.marginRight = '5px';
 
