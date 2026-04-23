@@ -45,7 +45,7 @@ window.onload = function () {
         if (fileInEl.files) {
             let fileLoadLabel = document.getElementById('fileLoadLabel');
             if (fileLoadLabel)
-                fileLoadLabel.innerText = fileInEl.files[0].name;
+                fileLoadLabel.innerHTML = fileInEl.files[0].name;
         }
     })
 
@@ -54,7 +54,7 @@ window.onload = function () {
 
 function actionBtnClickHandler(e: Event) {
     const actionBtn = e.currentTarget as HTMLElement;
-    if (actionBtn.innerText == 'Start') start(actionBtn);
+    if (actionBtn.innerHTML == 'Start') start(actionBtn);
     else calc();
 }
 
@@ -71,9 +71,9 @@ function start(actionBtn: HTMLElement) {
         }
         AS = new ActionSelector('ActionSelector', players, modes, PS.getDeler());
 
-        if(actionBtn) actionBtn.innerText = 'Calc and Add Score';
+        if(actionBtn) actionBtn.innerHTML = 'Calc and Add Score';
 
-        if(saveloadBtn) saveloadBtn.innerText = 'Save';
+        if(saveloadBtn) saveloadBtn.innerHTML = 'Save';
 
         if(fileInDiv) fileInDiv.hidden = true;
     }
@@ -102,7 +102,7 @@ function calc() {
 
 function saveLoadBtnClickHandler(e: Event) {
     const btn = e.currentTarget as HTMLElement;
-    if (btn.innerText == 'Load') load(btn);
+    if (btn.innerHTML == 'Load') load(btn);
     else save();
 }
 
