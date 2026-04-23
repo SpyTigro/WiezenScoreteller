@@ -1,0 +1,37 @@
+export default class HistoryTable {
+    constructor(htmlId, headers) {
+        this.historyTable = new Array();
+        this.rows = headers.length;
+        this.htmlId = htmlId;
+        let div = document.getElementById(htmlId);
+        if (!div) {
+            div = document.createElement('div');
+            div.id = htmlId;
+            document.body.appendChild(div);
+        }
+        div.innerHTML = '';
+        this.HTMLDiv = div;
+        this.HTMLTable = document.createElement('table');
+        this.HTMLTable.id = `${htmlId}-table`;
+        let headerRow = document.createElement('tr');
+        headerRow.id = `${htmlId}-header`;
+        headers.forEach(e => headerRow.innerHTML += `<th>${e}</th>`);
+        this.HTMLTable.appendChild(headerRow);
+        this.HTMLDiv.appendChild(this.HTMLTable);
+    }
+    addEntry(entries) {
+        var _a;
+        if (entries.length != this.rows)
+            throw new RangeError('Not enough/Too much entries in Array');
+        this.historyTable.push(entries.copyWithin(0, 0).slice());
+        (_a = document.getElementById(`${this.htmlId}-header`)) === null || _a === void 0 ? void 0 : _a.after(this.makeTableRowEntry(entries));
+    }
+    getTable() {
+        return this.historyTable;
+    }
+    makeTableRowEntry(entries) {
+        let row = document.createElement('tr');
+        entries.forEach(e => row.innerHTML += `<td>${e}</td>`);
+        return row;
+    }
+}
