@@ -6,7 +6,7 @@ export default class ActionSelector {
     private modes: Array<ActionMode>;
 
     private checkedP: Array<boolean>;
-    private checkedM: number = 0;
+    private checkedM: number = -1;
     private trul: boolean = false;
     private slagen: number = 0;
 
@@ -43,6 +43,9 @@ export default class ActionSelector {
     }
 
     getScoreDelta(): Array<number> {
+        if(this.checkedM<0)
+            throw new Error('No mode selected');
+
         let deltaScores = this.modes[this.checkedM].getScoreDelta(this.checkedP, this.deler, this.trul);
         this.nextDeler();
         return deltaScores;

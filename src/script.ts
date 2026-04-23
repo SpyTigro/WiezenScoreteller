@@ -60,12 +60,22 @@ function actionBtnClickHandler(e: Event) {
 
 function start(actionBtn: HTMLElement) {
     try {
-        players = PS.lock();
+        let newPlayers = PS.lock();
+        let playersChanged = false;
+        if(players.length != newPlayers.length)
+            playersChanged = true;
+        else
+            for(let i = 0; i < players.length && !playersChanged; i++)
+                if(newPlayers[i] != players[i])
+                    playersChanged = true;
+
+        players = newPlayers;
         modes = MS.lock();
 
-        if (!ST) {
+        if (!ST || playersChanged) {
             ST = new HistoryTable<number>('ScoreTable', players);
 
+            scores = new Array<number>;
             players.forEach(p => scores.push(0));
             ST.addEntry(scores);
         }
