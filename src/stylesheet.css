@@ -18,32 +18,44 @@ p {
 }
 
 button {
-    background-color: lightgray;
-    border: 2px solid lightgray;
-    border-radius: 100px;
-    color: black;
-    font-size: 16px;
+    background: #fff;
+    border: 2px solid #b91c1c;
+    border-radius: 24px;
+    color: #b91c1c;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px 28px;
+    margin: 4px 0;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.06);
     cursor: pointer;
-    margin: 2px;
+    transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s, transform 0.1s;
+    text-transform: uppercase;
 }
 
-button:hover{
-    border: 2px solid red;
+button:hover, button:focus {
+    background: #b91c1c;
+    color: #fff;
+    border: 2px solid #111;
+    box-shadow: 0 4px 16px 0 rgba(185,28,28,0.15);
+    outline: none;
+    transform: translateY(-2px) scale(1.03);
 }
 
 input{
-    font-size: 18px;
-    border: 2px solid lightgray;
-    border-radius: 100px;
-    padding: 1px 6px;
+    font-size: 1rem;
+    border: 2px solid #b91c1c;
+    border-radius: 12px;
+    padding: 6px 12px;
+    margin: 2px 0;
+    background: #fff;
+    color: #111;
+    transition: border 0.2s;
 }
 
 input[type="range"]{
-    accent-color: red;
-    padding: 0px;
-    border: 0px;
-    width: 200px;
-    
+    accent-color: #b91c1c;
+    width: 220px;
+    margin: 0 8px;
 }
 
 input[type="radio"], input[type="checkbox"]{
@@ -52,21 +64,33 @@ input[type="radio"], input[type="checkbox"]{
 
 .checkDiv{
     display: flex;
-    margin: 2px;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0;
 }
 
 .check, .checked{
-    border: 2px solid lightgray;
-    border-radius: 100px;
-    padding: 1px 6px;
+    border: 2px solid #b91c1c;
+    border-radius: 16px;
+    padding: 4px 16px;
+    font-size: 1rem;
+    background: #fff;
+    color: #111;
+    cursor: pointer;
+    transition: border 0.2s, background 0.2s, color 0.2s;
+    user-select: none;
 }
 
 .check:hover, .checked:hover{
-    border: 2px solid black;
+    border: 2px solid #111;
+    background: #f8d7da;
+    color: #b91c1c;
 }
 
 .checked{
-    border: 2px solid red;
+    border: 2px solid #b91c1c;
+    background: #f8d7da;
+    color: #b91c1c;
 }
 
 input[type="file"] {
@@ -77,69 +101,58 @@ input[type="file"] {
 }
 
 .fileLoad {
-    background-color: lightgray;
-    border: 2px solid lightgray;
-    border-radius: 100px;
-    display: inline-flex;
-    align-items: center;
-    color: black;
-    margin: 2px;
+    background: #fff;
+    border: 2px dashed #b91c1c;
+    border-radius: 16px;
+    padding: 16px 12px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    color: #b91c1c;
 }
 
 .fileLoadBtn {
-    background-color: red;
-    border-radius: 100px;
-    /* color: black; */
-    font-weight: bold;
-    text-align: center;
+    background: #b91c1c;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 6px 18px;
+    font-weight: 600;
     cursor: pointer;
-    display: inline-block;
-    padding: 1px 6px;
+    margin-bottom: 4px;
+    transition: background 0.2s;
 }
 
 .fileLoadLabel {
-    border-radius: 100px;
-    cursor: pointer;
-    display: inline-block;
-    padding: 1px 6px;
+    color: #b91c1c;
+    font-size: 0.95rem;
+    margin-left: 4px;
 
 }
 
 .sidebar {
-    background-color: rgb(239, 239, 239);
-    display: inline-block;
-    min-width: 25%;
-    max-width: 50%;
-    height: fit-content;
-    max-height: 90vh;
-    box-sizing: border-box;
-    overflow-y: auto;
-    flex-shrink: 0;
-    padding: 10px 10px;
-    margin: 10px;
-    top: 0;
-    left: 0;
-    Border: 5px solid lightgray;
-    border-radius: 25px;
+    background: #fff;
+    min-width: 320px;
+    max-width: 350px;
+    box-shadow: 2px 0 16px 0 rgba(0,0,0,0.10);
+    padding: 32px 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    border-radius: 0 24px 24px 0;
+    z-index: 2;
 }
 
 .deler {
-    position: relative;
-}
-
-.deler::before {
-    content: "";
-    position: absolute;
-    left: -32%;
-    top: -10%;
-    /* directly below the element */
-    width: 24px;
-    /* adjust size as needed */
-    height: 24px;
-    background: red;
-    border-radius: 50%;
-    z-index: -1;
-    pointer-events: none;
+    font-weight: bold;
+    color: #111;
+    background: #fff;
+    border: 2px solid #111;
+    border-radius: 8px;
+    padding: 2px 8px;
+    margin-right: 6px;
 }
 
 .Selector>* {
@@ -147,19 +160,47 @@ input[type="file"] {
 }
 
 .main {
-    padding: 50px;
-    flex-grow: 1;
-    height: 100%;
+    flex: 1;
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-y: auto;
+    background: #fff;
 }
 
 .HistoryTable table,
 th,
 td {
-    padding: 10px;
-    text-align: center;
-    border-left: 2px solid gray;
-    border-right: 2px solid gray;
+/* Table Styling */
+.HistoryTable table {
+    width: 100%;
     border-collapse: collapse;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.10);
+    overflow: hidden;
+    margin-top: 12px;
+    border: 2px solid #111;
+}
+.HistoryTable th, .HistoryTable td {
+    padding: 12px 16px;
+    text-align: center;
+}
+.HistoryTable th {
+    background: #b91c1c;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #111;
+    letter-spacing: 1px;
+}
+.HistoryTable tr:nth-child(even) {
+    background: #f8d7da;
+}
+.HistoryTable tr:hover {
+    background: #fff0f3;
+    transition: background 0.2s;
 }
 
 [hidden] {
