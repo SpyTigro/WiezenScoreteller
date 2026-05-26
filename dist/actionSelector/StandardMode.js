@@ -11,7 +11,7 @@ export default class StandardMode extends ActionMode {
     getScoreDelta(goingPlayers, deler, trul) {
         let goingCount = this.getAndCheckGoingPlayerCount(goingPlayers, deler);
         if (trul && goingCount < 2)
-            throw new Error('trul gaat niet alleen');
+            throw new Error('Trul gaat niet alleen');
         let slagen = this.slagenSelector.getSlagen();
         let threshold = 8;
         if (goingCount < 2)

@@ -11,7 +11,7 @@ export default class AbondanceMode extends ActionMode {
     getScoreDelta(goingPlayers, deler, trul) {
         let goingCount = this.getAndCheckGoingPlayerCount(goingPlayers, deler);
         if (trul)
-            throw new Error('dit mag niet boven trul');
+            throw new Error('Dit mag niet boven trul');
         let slagen = this.slagenSelector.getSlagen();
         let perP = slagen >= this.threshold ? this.base : -this.base;
         return this.perPlayerToScoreDelta(perP, goingPlayers, deler);

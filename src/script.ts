@@ -52,6 +52,12 @@ window.onload = function () {
     fileInDiv = document.getElementById('fileLoad') as HTMLDivElement;
 }
 
+window.addEventListener('beforeunload', function (e) {
+    e.preventDefault(); 
+
+    e.returnValue = '';
+});
+
 function actionBtnClickHandler(e: Event) {
     const actionBtn = e.currentTarget as HTMLElement;
     if (actionBtn.innerHTML == 'Start') start(actionBtn);

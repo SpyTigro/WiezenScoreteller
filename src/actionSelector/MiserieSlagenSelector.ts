@@ -12,7 +12,7 @@ export default class MiserieSlagenSelector {
         div.className = 'Selector';
 
         const pEl = document.createElement('p');
-        pEl.innerText = 'Who succeeded?';
+        pEl.innerText = 'Wie won?';
         div.appendChild(pEl);
 
         for (let i = 0; i < players.length; i++) {

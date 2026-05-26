@@ -85,6 +85,9 @@ export default class ActionSelector {
         DivEl.appendChild(checkEl);
         DivEl.appendChild(labelEl);
         div.appendChild(DivEl);
+        const HrEl = document.createElement('hr');
+        HrEl.className = "checkRadioDivider";
+        div.appendChild(HrEl);
         let slagenSelectorDiv = document.createElement('div');
         slagenSelectorDiv.id = `${div.id}-slagenSelector`;
         for (let i = 0; i < this.modes.length; i++) {

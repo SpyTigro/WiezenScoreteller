@@ -39,6 +39,10 @@ window.onload = function () {
         });
     fileInDiv = document.getElementById('fileLoad');
 };
+window.addEventListener('beforeunload', function (e) {
+    e.preventDefault();
+    e.returnValue = '';
+});
 function actionBtnClickHandler(e) {
     const actionBtn = e.currentTarget;
     if (actionBtn.innerHTML == 'Start')

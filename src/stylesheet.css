@@ -17,6 +17,13 @@ p {
     margin: 0;
 }
 
+hr.checkRadioDivider{
+    border-top: 2px solid lightgray;
+    border-radius: 6px;
+    width: 100px;
+    margin: 0 20px;
+}
+
 button {
     background: #fff;
     border: 2px solid #b91c1c;
@@ -95,9 +102,9 @@ input[type="checkbox"] {
 }
 
 .checked {
-    border: 2px solid #b91c1c;
-    background: #f0f0f0;
-    color: #111;
+    border: 2px solid #111;
+    background: #f8f8f8;
+    color: #b91c1c;
 }
 
 
