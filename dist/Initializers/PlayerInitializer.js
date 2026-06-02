@@ -86,7 +86,7 @@ export default class PlayerInitializer {
         if (this.deler > 0)
             this.deler--;
         else
-            this.deler = this.currentP;
+            this.deler = this.currentP - 1;
         this.setDeler(this.deler);
     }
     addPlayerSetter(name) {

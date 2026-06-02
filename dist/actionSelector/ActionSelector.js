@@ -44,7 +44,7 @@ export default class ActionSelector {
         if (this.deler > 0)
             this.deler--;
         else
-            this.deler = this.players.length;
+            this.deler = this.players.length - 1;
         this.setDeler(this.deler);
     }
     setDeler(deler) {
