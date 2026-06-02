@@ -95,7 +95,7 @@ export default class PlayerInitializer {
 
     previousDeler() {
         if (this.deler > 0) this.deler--;
-        else this.deler = this.currentP;
+        else this.deler = this.currentP - 1;
         this.setDeler(this.deler);
     }
 

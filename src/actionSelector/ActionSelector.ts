@@ -59,7 +59,7 @@ export default class ActionSelector {
 
     previousDeler() {
         if (this.deler > 0) this.deler--;
-        else this.deler = this.players.length;
+        else this.deler = this.players.length - 1;
         this.setDeler(this.deler);
     }
 
