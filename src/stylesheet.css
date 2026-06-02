@@ -103,8 +103,8 @@ input[type="checkbox"] {
 
 .checked {
     border: 2px solid #111;
-    background: #f8f8f8;
-    color: #b91c1c;
+    background: #b91c1c;
+    color: #f8f8f8;
 }
 
 
