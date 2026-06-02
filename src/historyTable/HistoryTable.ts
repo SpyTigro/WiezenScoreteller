@@ -37,8 +37,12 @@ export default class HistoryTable<T> {
     }
 
     removeLast(): Array<T>{
+        if(this.historyTable.length <= 1){
+            const newLast = this.historyTable[this.historyTable.length - 1];
+            return newLast ? newLast.slice() : [];
+        }
         // remove last entry from data and DOM
-        const removed = this.historyTable.pop();
+        this.historyTable.pop();
         document.getElementById(`${this.htmlId}-row${this.historyTable.length}`)?.remove();
         // return the new last entry (after removal) or empty array
         const newLast = this.historyTable[this.historyTable.length - 1];
