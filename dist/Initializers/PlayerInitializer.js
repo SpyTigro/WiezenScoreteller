@@ -64,15 +64,7 @@ export default class PlayerInitializer {
         }
     }
     setDeler(deler) {
-        while (this.deler != deler) {
-            this.nextDeler();
-        }
-    }
-    nextDeler() {
-        if (this.deler < this.currentP - 1)
-            this.deler++;
-        else
-            this.deler = 0;
+        this.deler = deler;
         for (let i = 0; i < this.currentP; i++) {
             let labelEl = document.getElementById(`${this.htmlId}-setter-label${i}`);
             if (!labelEl)
@@ -82,6 +74,20 @@ export default class PlayerInitializer {
             else
                 labelEl.className = '';
         }
+    }
+    nextDeler() {
+        if (this.deler < this.currentP - 1)
+            this.deler++;
+        else
+            this.deler = 0;
+        this.setDeler(this.deler);
+    }
+    previousDeler() {
+        if (this.deler > 0)
+            this.deler--;
+        else
+            this.deler = this.currentP;
+        this.setDeler(this.deler);
     }
     addPlayerSetter(name) {
         let i = this.currentP;

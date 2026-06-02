@@ -18,13 +18,16 @@ let modes = [new StandardMode('Standaard', 2, 1),
 ];
 let scores = new Array;
 let loadedFile = undefined;
-let actionBtn, saveloadBtn, fileInEl, fileInDiv;
+let actionBtn, removeLastBtn, saveloadBtn, fileInEl, fileInDiv;
 window.onload = function () {
     PS = new PlayerInitializer('PlayerSelector', 5, 4);
     MS = new ModeInitializer('ModeSelector', modes);
     actionBtn = document.getElementById('ActionButton');
     if (actionBtn)
         actionBtn.addEventListener('click', actionBtnClickHandler);
+    removeLastBtn = document.getElementById('RemoveLast');
+    if (removeLastBtn)
+        removeLastBtn.addEventListener('click', removeLastBtnClickHandler);
     saveloadBtn = document.getElementById('SaveLoadBtn');
     if (saveloadBtn)
         saveloadBtn.addEventListener('click', saveLoadBtnClickHandler);
@@ -43,6 +46,17 @@ window.addEventListener('beforeunload', function (e) {
     e.preventDefault();
     e.returnValue = '';
 });
+function removeLastBtnClickHandler(e) {
+    if (ST && confirm('are you sure you want to delete, you cant reverse this action')) {
+        scores = ST.removeLast();
+        if (AS)
+            AS.previousDeler();
+        if (PS)
+            PS.previousDeler();
+        if (scores.length == 0)
+            players.forEach(p => scores.push(0));
+    }
+}
 function actionBtnClickHandler(e) {
     const actionBtn = e.currentTarget;
     if (actionBtn.innerHTML == 'Start')

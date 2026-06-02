@@ -38,6 +38,17 @@ export default class ActionSelector {
             this.deler++;
         else
             this.deler = 0;
+        this.setDeler(this.deler);
+    }
+    previousDeler() {
+        if (this.deler > 0)
+            this.deler--;
+        else
+            this.deler = this.players.length;
+        this.setDeler(this.deler);
+    }
+    setDeler(deler) {
+        this.deler = deler;
         for (let i = 0; i < this.players.length; i++) {
             let labelEl = document.getElementById(`${this.htmlId}-check-ilabel${i}`);
             if (!labelEl)

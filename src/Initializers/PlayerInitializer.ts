@@ -78,20 +78,25 @@ export default class PlayerInitializer {
     }
 
     setDeler(deler: number) {
-        while (this.deler != deler) {
-            this.nextDeler()
-        }
-    }
-
-    private nextDeler() {
-        if (this.deler < this.currentP - 1) this.deler++;
-        else this.deler = 0;
+        this.deler = deler
         for (let i = 0; i < this.currentP; i++) {
             let labelEl = document.getElementById(`${this.htmlId}-setter-label${i}`);
             if (!labelEl) continue;
             if (i == this.deler) labelEl.className = 'deler';
             else labelEl.className = '';
         }
+    }
+
+    nextDeler() {
+        if (this.deler < this.currentP - 1) this.deler++;
+        else this.deler = 0;
+        this.setDeler(this.deler);
+    }
+
+    previousDeler() {
+        if (this.deler > 0) this.deler--;
+        else this.deler = this.currentP;
+        this.setDeler(this.deler);
     }
 
     private addPlayerSetter(name: string) {

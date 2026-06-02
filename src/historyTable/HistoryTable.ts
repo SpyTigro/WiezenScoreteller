@@ -32,16 +32,26 @@ export default class HistoryTable<T> {
     addEntry(entries: Array<T>) {
         if (entries.length != this.rows) throw new RangeError('Not enough/Too much entries in Array');
 
-        this.historyTable.push(entries.copyWithin(0, 0).slice());
+        this.historyTable.push(entries.slice());
         document.getElementById(`${this.htmlId}-header`)?.after(this.makeTableRowEntry(entries));
     }
 
+    removeLast(): Array<T>{
+        // remove last entry from data and DOM
+        const removed = this.historyTable.pop();
+        document.getElementById(`${this.htmlId}-row${this.historyTable.length}`)?.remove();
+        // return the new last entry (after removal) or empty array
+        const newLast = this.historyTable[this.historyTable.length - 1];
+        return newLast ? newLast.slice() : [];
+    }
+
     getTable(): Array<Array<T>>{
-        return this.historyTable;
+        return this.historyTable.copyWithin(0,0).slice();
     }
 
     private makeTableRowEntry(entries: Array<T>): HTMLTableRowElement {
         let row = document.createElement('tr') as HTMLTableRowElement;
+        row.id = `${this.htmlId}-row${this.historyTable.length-1}`;
         entries.forEach(e => row.innerHTML += `<td>${e}</td>`);
         return row;
     }
