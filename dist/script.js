@@ -121,7 +121,7 @@ function save() {
     let saveObj = {
         players: players,
         modes: modes,
-        deler: PS.getDeler(),
+        deler: AS.getDeler(),
         scoreTable: ST.getTable(),
     };
     let jsonStr = JSON.stringify(saveObj);
@@ -172,7 +172,7 @@ function load(btn) {
             const text = (_a = e.target) === null || _a === void 0 ? void 0 : _a.result;
             console.log(text);
             let loadObj = JSON.parse(text);
-            if (!loadObj.players || !loadObj.modes || !loadObj.scoreTable || !loadObj.deler) {
+            if (!loadObj.players || !loadObj.modes || !loadObj.scoreTable || loadObj.deler == undefined) {
                 alert('invalid file');
                 return;
             }

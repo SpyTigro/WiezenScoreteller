@@ -52,14 +52,12 @@ export default class ActionSelector {
     }
 
     nextDeler() {
-        if (this.deler < this.players.length - 1) this.deler++;
-        else this.deler = 0;
+        this.deler = (this.deler + 1) % this.players.length
         this.setDeler(this.deler);
     }
 
     previousDeler() {
-        if (this.deler > 0) this.deler--;
-        else this.deler = this.players.length - 1;
+        this.deler = (this.deler - 1) % this.players.length
         this.setDeler(this.deler);
     }
 

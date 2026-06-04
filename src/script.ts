@@ -138,7 +138,7 @@ function save() {
     let saveObj = {
         players: players,
         modes: modes,
-        deler: PS.getDeler(),
+        deler: AS.getDeler(),
         scoreTable: ST.getTable(),
     }
 
@@ -190,7 +190,7 @@ function load(btn: HTMLElement) {
             const text = e.target?.result as string;
             console.log(text);
             let loadObj = JSON.parse(text);
-            if (!loadObj.players || !loadObj.modes || !loadObj.scoreTable || !loadObj.deler) {
+            if (!loadObj.players || !loadObj.modes || !loadObj.scoreTable || loadObj.deler == undefined) {
                 alert('invalid file');
                 return;
             }
