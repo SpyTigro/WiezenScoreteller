@@ -21,6 +21,22 @@ export default abstract class ActionMode{
 
     abstract clone(name: string, base: number, overslag: number): ActionMode;
 
+    protected addArrays(arr1: Array<number>, arr2: Array<number>): Array<number>{
+        let arr = Array<number>(Math.max(arr1.length, arr2.length));
+        for(let i = 0; i< arr.length; i++){
+            if(!arr1[i]) {
+                arr[i] = arr2[i];
+                continue;
+            }
+            if(!arr2[i]) {
+                arr[i] = arr1[i];
+                continue;
+            }
+            arr[i] = arr1[i] + arr2[i];
+        }
+        return arr;
+    }
+
     protected getAndCheckGoingPlayerCount(goingPlayers: Array<boolean>, deler: number): number{
         let goingCount = 0;
         for (let i = 0; i < goingPlayers.length; i++) {
@@ -46,21 +62,5 @@ export default abstract class ActionMode{
         }
         if(goingPlayers.length == 5) scores[deler] = 0;
         return scores;
-    }
-
-    protected addArrays(arr1: Array<number>, arr2: Array<number>): Array<number>{
-        let arr = Array<number>(Math.max(arr1.length, arr2.length));
-        for(let i = 0; i< arr.length; i++){
-            if(!arr1[i]) {
-                arr[i] = arr2[i];
-                continue;
-            }
-            if(!arr2[i]) {
-                arr[i] = arr1[i];
-                continue;
-            }
-            arr[i] = arr1[i] + arr2[i];
-        }
-        return arr;
     }
 }
