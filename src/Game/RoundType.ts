@@ -3,6 +3,16 @@ import { addArrays } from "./Util.js";
 
 export type RoundTypeOptions = { over?: number, loseMod?: number, kaputMod?: number, thresholdSolo?: number, reverseThreshold?: boolean, teamed?: boolean, overTrul?: boolean }
 
+export const roundTypeOptionKeys = [
+  'Over',
+  'Lose Mult',
+  'Kaput Mult',
+  'Threshold Solo',
+  'Reverse Threshold',
+  'In Teams',
+  'Works in Trul',
+];
+
 export class RoundType {
     readonly typeId: string;
 

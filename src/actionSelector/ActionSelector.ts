@@ -1,4 +1,4 @@
-import ActionMode from "./ActionMode.js";
+import { Game } from '../Game/Game.js';
 
 export default class ActionSelector {
     private deler: number;
@@ -13,7 +13,7 @@ export default class ActionSelector {
     private htmlId: string;
     private HTMLDiv: HTMLElement;
 
-    constructor(htmlId: string, players: Array<string>, modes: Array<ActionMode> = [], deler: number = 0) {
+    constructor(htmlId: string, game: Game) {
         this.htmlId = htmlId;
         this.deler = deler;
         if (players.length < 4 || players.length > 5) throw new Error('Incorrect amount of players');

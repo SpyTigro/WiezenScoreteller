@@ -1,27 +1,17 @@
 import PlayerInitializer from "./Initializers/PlayerInitializer.js";
-import ModeInitializer from "./Initializers/ModeInitializer.js";
+import { RoundTypeInitializer } from "./Initializers/RoundTypeInitializer.js";
 import ActionSelector from "./actionSelector/ActionSelector.js";
 import HistoryTable from "./historyTable/HistoryTable.js";
-import StandardMode from "./actionSelector/StandardMode.js";
-import MiserieMode from "./actionSelector/MiserieMode.js";
-import AbondanceMode from "./actionSelector/AbondanceMode.js";
-let PS, MS, ST, AS;
+import { Game } from "./Game/Game.js";
+let game, PS, RTI, ST, AS;
 let players = new Array;
-let modes = [new StandardMode('Standaard', 2, 1),
-    new MiserieMode('Miserie', 5),
-    new MiserieMode('Open Miserie', 10),
-    new AbondanceMode('Negen', 9, 5),
-    new AbondanceMode('Tien', 10, 5),
-    new AbondanceMode('Elf', 11, 5),
-    new AbondanceMode('Twaalf', 12, 5),
-    new AbondanceMode('Solo', 13, 15),
-];
+let roundTypes = [];
 let scores = new Array;
 let loadedFile = undefined;
 let actionBtn, removeLastBtn, saveloadBtn, fileInEl, fileInDiv;
 window.onload = function () {
     PS = new PlayerInitializer('PlayerSelector', 5, 4);
-    MS = new ModeInitializer('ModeSelector', modes);
+    RTI = new RoundTypeInitializer('ModeSelector', roundTypes);
     actionBtn = document.getElementById('ActionButton');
     if (actionBtn)
         actionBtn.addEventListener('click', actionBtnClickHandler);
@@ -75,14 +65,8 @@ function start(actionBtn) {
                 if (newPlayers[i] != players[i])
                     playersChanged = true;
         players = newPlayers;
-        modes = MS.lock();
-        if (!ST || playersChanged) {
-            ST = new HistoryTable('ScoreTable', players);
-            scores = new Array;
-            players.forEach(p => scores.push(0));
-            ST.addEntry(scores);
-        }
-        AS = new ActionSelector('ActionSelector', players, modes, PS.getDeler());
+        game = new Game(players, RTI.types, PS.getDeler());
+        AS = new ActionSelector('ActionSelector', game);
         if (actionBtn)
             actionBtn.innerHTML = 'Calc and Add Score';
         if (saveloadBtn)
@@ -120,7 +104,7 @@ function saveLoadBtnClickHandler(e) {
 function save() {
     let saveObj = {
         players: players,
-        modes: modes,
+        modes: roundTypes,
         deler: AS.getDeler(),
         scoreTable: ST.getTable(),
     };
@@ -179,11 +163,11 @@ function load(btn) {
             players = loadObj.players;
             PS.setPlayers(players);
             PS.setDeler(loadObj.deler);
-            for (let i = 0; i < modes.length; i++) {
+            for (let i = 0; i < roundTypes.length; i++) {
                 let loadedMode = loadObj.modes[i];
-                modes[i] = modes[i].clone(loadedMode.name, loadedMode.base, loadedMode.over);
+                roundTypes[i] = roundTypes[i].clone(loadedMode.name, loadedMode.base, loadedMode.over);
             }
-            MS = new ModeInitializer('ModeSelector', modes);
+            RTI = new ModeInitializer('ModeSelector', roundTypes);
             let tempScores = loadObj.scoreTable;
             ST = new HistoryTable('ScoreTable', players);
             tempScores.forEach(e => ST.addEntry(e));

@@ -1,5 +1,5 @@
 export default class ActionSelector {
-    constructor(htmlId, players, modes = [], deler = 0) {
+    constructor(htmlId, game) {
         this.checkedM = -1;
         this.trul = false;
         this.slagen = 0;

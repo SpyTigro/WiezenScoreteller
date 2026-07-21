@@ -1,4 +1,13 @@
 import { addArrays } from "./Util.js";
+export const roundTypeOptionKeys = [
+    'Over',
+    'Lose Mult',
+    'Kaput Mult',
+    'Threshold Solo',
+    'Reverse Threshold',
+    'In Teams',
+    'Works in Trul',
+];
 export class RoundType {
     constructor(typeId, base, threshold, options, minP = 1, maxP = 4) {
         this.typeId = typeId;

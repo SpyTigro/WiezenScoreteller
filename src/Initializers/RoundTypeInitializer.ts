@@ -1,73 +1,267 @@
-import { RoundType, RoundTypeOptions } from "../Game/RoundType";
+import { RoundType, roundTypeOptionKeys, RoundTypeOptions } from "../Game/RoundType.js";
 
 export class RoundTypeInitializer {
     private htmlId: string;
 
     private roundTypes: RoundType[];
+    private amountSetters: number;
 
     constructor(htmlId: string, roundTypes: RoundType[]){
         this.htmlId = htmlId;
 
+        let div = document.getElementById(htmlId);
+        if (!div) {
+            div = document.createElement('div');
+            div.id = htmlId;
+            document.body.appendChild(div);
+        }
+        div.innerHTML = '';
+
         this.roundTypes = roundTypes;
+        this.amountSetters = 0;
+
+        let titleEl = document.createElement('h1');
+        titleEl.innerText = 'Types:';
+        div.appendChild(titleEl);
+
+        const addTypeBtn = document.createElement('button');
+        addTypeBtn.id = `${this.htmlId}-addTypeBtn`;
+
+        addTypeBtn.addEventListener('click', () =>{
+            div.appendChild(this.addRoundTypeSetter(this.amountSetters));
+            this.amountSetters += 1;
+        })
+        div.appendChild(addTypeBtn);
+
+        this.roundTypes.forEach((r, i) =>{
+            div.appendChild(this.addRoundTypeSetter(i, r));
+            this.amountSetters += 1;
+        });
     }
 
-    addRoundTypeSetter(i: number, roundType?: RoundType){
-        const div = document.createElement('div');
-        div.id = `${this.htmlId}-setter${i}`;
-        // div.style.display = 'flex';
-        // div.style.flexDirection = 'row';
-        // div.style.alignItems = 'center'; // vertically center them
+    get types(): Array<RoundType>{
+        const res = new Array<RoundType>
+        for (let i = 0; i < this.amountSetters; i++){
+            let optionals: RoundTypeOptions = {};
+            roundTypeOptionKeys.forEach((a, i) => {
+                const attributeInput = document.getElementById(`${this.htmlId}-In${a}${i}`) as HTMLInputElement;
+                if(attributeInput) 
+                    switch(a){
+                        case 'Over':
+                            optionals.over = Number(attributeInput.value);
+                            break;
+                        case 'Lose Mult':
+                            optionals.loseMod = Number(attributeInput.value);
+                            break;
+                        case 'Kaput Mult':
+                            optionals.kaputMod = Number(attributeInput.value);
+                            break;
+                        case 'Threshold Solo':
+                            optionals.thresholdSolo = Number(attributeInput.value);
+                            break;
+                        case 'Reverse Threshold':
+                            optionals.reverseThreshold = Boolean(attributeInput.value);
+                            break;
+                        case 'In Teams':
+                            optionals.teamed = Boolean(attributeInput.value);
+                            break;
+                        case 'Works in Trul':
+                            optionals.overTrul = Boolean(attributeInput.value);
+                            break;
+                        default:
+                            return;
+                    }
+            });
+            let typeId = ''
+            const typeInput = document.getElementById(`${this.htmlId}-InTypeId${i}`) as HTMLInputElement;
+            if(!typeInput) throw new Error('No base Entered'); 
+            typeId = typeInput.value
+
+            let base = 0;
+            const baseInput = document.getElementById(`${this.htmlId}-InBase${i}`) as HTMLInputElement;
+            if(!baseInput) throw new Error('No base Entered'); 
+            base = Number(baseInput.value)
+
+            let threshold = 0; 
+            const thresholdInput = document.getElementById(`${this.htmlId}-InThreshold${i}`) as HTMLInputElement;
+            if(!thresholdInput) throw new Error('No base Entered'); 
+            threshold = Number(thresholdInput.value)
+
+            res.push(new RoundType(typeId, base, threshold, optionals))
+        }
+        return res;
+    }
+
+    addRoundTypeSetter(id: number, roundType?: RoundType): HTMLDivElement{
+        const div = this.columnDiv(`${this.htmlId}-setter${id}`);
+
+        const topDiv = this.rowDiv(`${this.htmlId}-divTop${id}`);
 
         const textInEl = document.createElement('input');
         textInEl.value = roundType ? roundType.typeId : '';
-        textInEl.id = `${this.htmlId}-setter-text${i}`;
+        textInEl.id = `${this.htmlId}-InTypeId${id}`;
         textInEl.style.marginRight = '2px';
 
         const OptionBtnEl = document.createElement('button');
-        OptionBtnEl.innerText = 'Options >';
+        OptionBtnEl.innerText = 'Options [Show]';
 
-        const rowDiv = document.createElement('div');
-        rowDiv.id = `${this.htmlId}-setter${i}`;
-        rowDiv.style.display = 'flex';
-        rowDiv.style.flexDirection = 'row';
-        rowDiv.style.alignItems = 'center'; // vertically center them
-        rowDiv.style.marginTop = '2px';
+        topDiv.appendChild(textInEl);
+        topDiv.appendChild(OptionBtnEl);
+
+        const OptionDiv = document.createElement('div');
+        OptionDiv.hidden = true;
+        OptionDiv.id = `${this.htmlId}-typeoptions${id}`;
 
         OptionBtnEl.addEventListener('click', () =>{
-            rowDiv.hidden = !rowDiv.hidden;
+            if(OptionDiv.hidden) {
+                OptionDiv.hidden = false;
+                OptionBtnEl.innerText ='Options [Hide]';
+            }
+            else  {
+                OptionDiv.hidden = true;
+                OptionBtnEl.innerText ='Options [Show]';
+            }
         })
 
-        const baseInEl = document.createElement('input');
-        baseInEl.type = 'number';
-        baseInEl.value = roundType ? String(roundType.base) : '';
-        baseInEl.id = `${this.htmlId}-setter-base${i}`;
-        baseInEl.style.width = '10%';
-        baseInEl.style.marginRight = '2px';
-
-        const baseLabelEl = document.createElement('label') as HTMLLabelElement;
-        baseLabelEl.htmlFor = baseInEl.id;
-        baseLabelEl.id = `${this.htmlId}-setter-baseLabel${i}`;
-        baseLabelEl.innerText = `Base:`;
-        baseLabelEl.style.marginRight = '5px';
+        const attributeSelectDiv = this.rowDiv(`${this.htmlId}-divSelectAtt${id}`);
         
-        const overInEl = document.createElement('input');
-        overInEl.type = 'number';
-        overInEl.value = roundType ? String(roundType.over) : '';
-        overInEl.id = `${this.htmlId}-setter-over${i}`;
-        overInEl.style.width = '10%';
+        const attributeSelect = document.createElement('select');
+        roundTypeOptionKeys.forEach((a, i) =>{
+            const selectOption = document.createElement('option')
+            selectOption.innerText = a;
+            selectOption.id = `${this.htmlId}-attributeSelectOption${id}${i}`;
+            attributeSelect.appendChild(selectOption);
+        });
 
-        const overLabelEl = document.createElement('label') as HTMLLabelElement;
-        overLabelEl.htmlFor = overInEl.id;
-        overLabelEl.id = `${this.htmlId}-setter-overLabel${i}`;
-        overLabelEl.innerText = `Over:`;
-        overLabelEl.style.marginRight = '5px';
+        const addAttributeBtn = document.createElement('button');
+        addAttributeBtn.innerText = '+';
+        addAttributeBtn.id = `${this.htmlId}-addAttributeBtn${id}`;
+        
+        addAttributeBtn.addEventListener('click', () => {
+            let i = attributeSelect.selectedIndex;
+            const option = document.getElementById(`${this.htmlId}-attributeSelectOption${id}${i}`);
+            if(option) option.hidden = true;
+            else return;
 
-        div.appendChild(textInEl);
-        rowDiv.appendChild(baseLabelEl);
-        rowDiv.appendChild(baseInEl);
-        rowDiv.appendChild(overLabelEl);
-        rowDiv.appendChild(overInEl);
-        div.appendChild(rowDiv);
+            const attributeDiv = this.rowDiv(`${this.htmlId}-attribute${i}${id}`);
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.innerText = '-';
+            removeBtn.id = `${this.htmlId}-divOptionRBtn${id}`;
+
+            removeBtn.addEventListener('click', () => {
+                document.removeChild(attributeDiv);
+                option.hidden = false;
+            })
+
+            const attributeSetterDiv = this.attributeSetterDiv(id, option.innerText, roundType);
+            if(attributeSetterDiv) attributeDiv.appendChild(attributeSetterDiv);
+            else return
+
+            OptionDiv.appendChild(attributeDiv);
+        })
+
+        attributeSelectDiv.appendChild(attributeSelect);
+        attributeSelectDiv.appendChild(addAttributeBtn);
+
+        div.appendChild(topDiv);
+        OptionDiv.appendChild(attributeSelectDiv);
+        OptionDiv.appendChild(this.numInWithLabel(id, 'Base', roundType?.base));
+        OptionDiv.appendChild(this.numInWithLabel(id, 'Threshold', roundType?.threshold));
+        div.appendChild(OptionDiv);
+        return div;
+    }
+
+    private rowDiv(id: string): HTMLDivElement{
+        const div = document.createElement('div');
+        div.id = id;
+        div.style.display = 'flex';
+        div.style.flexDirection = 'row';
+        div.style.alignContent = 'center'; // vertically center them
+        return div
+    }
+
+    private columnDiv(id: string): HTMLDivElement{
+        const div = document.createElement('div');
+        div.id = id;
+        div.style.display = 'flex';
+        div.style.flexDirection = 'column';
+        div.style.alignContent = 'center'; // vertically center them
+        return div
+    }
+
+    private attributeSetterDiv(id: number, attribute: string, values?: RoundType): HTMLDivElement | undefined{
+        let value: number | boolean;
+        switch(attribute){
+                case 'Over':
+                    value = values ? values.over : 0;
+                    break;
+                case 'Lose Mult':
+                    value = values ? values.loseMod : 0;
+                    break;
+                case 'Kaput Mult':
+                    value = values ? values.kaputMod : 0;
+                    break;
+                case 'Threshold Solo':
+                    value = values ? values.kaputMod : 0;
+                    break;
+                case 'Reverse Threshold':
+                    value = values ? values.reverse : false;
+                    break;
+                case 'In Teams':
+                    value = values ? values.teamed : false;
+                    break;
+                case 'Works in Trul':
+                    value = values ? values.overTrul : false;
+                    break;
+                default:
+                    return;
+            }
+        if(typeof value === 'number')
+            return this.numInWithLabel(id, attribute, value);
+        else
+            return this.checkWithLabel(id, attribute, value)
+    }
+
+    private numInWithLabel(id: number, name: string, value: number = 0): HTMLDivElement{
+        const div = document.createElement('div');
+        div.id = `${this.htmlId}-divNumIn${name}${id}`;
+
+        const InEl = document.createElement('input');
+        InEl.type = 'number';
+        InEl.value = String(value);
+        InEl.id = `${this.htmlId}-In${name}${id}`;
+        InEl.style.width = '10%';
+
+        const LabelEl = document.createElement('label') as HTMLLabelElement;
+        LabelEl.htmlFor = InEl.id;
+        LabelEl.id = `${this.htmlId}-labelNumIn${name}${id}`;
+        LabelEl.innerText = `Over:`;
+        LabelEl.style.marginRight = '5px';
+
+        div.appendChild(LabelEl);
+        div.appendChild(InEl);
+        return div;
+    }
+
+    private checkWithLabel(id: number, name: string, value: boolean = false): HTMLDivElement{
+        const div = document.createElement('div');
+        div.id = `${this.htmlId}-divCheck${name}${id}`;
+
+        const InEl = document.createElement('input');
+        InEl.type = 'checkbox';
+        InEl.value = String(value);
+        InEl.id = `${this.htmlId}-In${name}${id}`;
+        InEl.style.width = '10%';
+
+        const LabelEl = document.createElement('label') as HTMLLabelElement;
+        LabelEl.htmlFor = InEl.id;
+        LabelEl.id = `${this.htmlId}-labelCheck${name}${id}`;
+        LabelEl.innerText = `Over:`;
+        LabelEl.style.marginRight = '5px';
+
+        div.appendChild(LabelEl);
+        div.appendChild(InEl);
         return div;
     }
 }
