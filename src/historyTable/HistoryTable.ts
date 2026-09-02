@@ -5,7 +5,7 @@ export default class HistoryTable<T> {
     private HTMLTable: HTMLTableElement;
     private htmlId: string;
 
-    constructor(htmlId: string, headers: Array<string>) {
+    constructor(htmlId: string, headers: Array<string>, entries?: Array<Array<T>>) {
         this.rows = headers.length;
         this.htmlId = htmlId;
 
@@ -27,13 +27,15 @@ export default class HistoryTable<T> {
         this.HTMLTable.appendChild(headerRow);
 
         this.HTMLDiv.appendChild(this.HTMLTable);
+
+        entries?.forEach(e => this.addEntry(e));
     }
 
-    addEntry(entries: Array<T>) {
-        if (entries.length != this.rows) throw new RangeError('Not enough/Too much entries in Array');
+    addEntry(entry: Array<T>) {
+        if (entry.length != this.rows) throw new RangeError('Not enough/Too much entries in Array');
 
-        this.historyTable.push(entries.slice());
-        document.getElementById(`${this.htmlId}-header`)?.after(this.makeTableRowEntry(entries));
+        this.historyTable.push(entry.slice());
+        document.getElementById(`${this.htmlId}-header`)?.after(this.makeTableRowEntry(entry));
     }
 
     removeLast(): Array<T>{
@@ -53,10 +55,10 @@ export default class HistoryTable<T> {
         return this.historyTable.copyWithin(0,0).slice();
     }
 
-    private makeTableRowEntry(entries: Array<T>): HTMLTableRowElement {
+    private makeTableRowEntry(entry: Array<T>): HTMLTableRowElement {
         let row = document.createElement('tr') as HTMLTableRowElement;
         row.id = `${this.htmlId}-row${this.historyTable.length-1}`;
-        entries.forEach(e => row.innerHTML += `<td>${e}</td>`);
+        entry.forEach(e => row.innerHTML += `<td>${e}</td>`);
         return row;
     }
 }

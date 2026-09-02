@@ -1,7 +1,7 @@
 import { RoundResult } from "./RoundResult.js";
 import { addArrays } from "./Util.js";
 
-export type RoundTypeOptions = { over?: number, loseMod?: number, kaputMod?: number, thresholdSolo?: number, reverseThreshold?: boolean, teamed?: boolean, overTrul?: boolean }
+export type RoundTypeOptions = { over?: number, loseMod?: number, kaputMod?: number, thresholdSolo?: number, reverseThreshold?: boolean, teamed?: boolean, overTrul?: boolean, minP?: number, maxP?: number}
 
 export const roundTypeOptionKeys = [
   'Over',
@@ -11,6 +11,8 @@ export const roundTypeOptionKeys = [
   'Reverse Threshold',
   'In Teams',
   'Works in Trul',
+  'Min #Players',
+  'Max #Players'
 ];
 
 export class RoundType {
@@ -31,7 +33,7 @@ export class RoundType {
     readonly teamed: boolean;
     readonly overTrul: boolean;
 
-    constructor(typeId: string, base: number, threshold: number, options: RoundTypeOptions, minP: number = 1, maxP: number = 4) {
+    constructor(typeId: string, base: number, threshold: number, options: RoundTypeOptions) {
         this.typeId = typeId;
 
         this.base = base;
@@ -41,19 +43,19 @@ export class RoundType {
 
         this.threshold = threshold;
         this.thresholdSolo = options.thresholdSolo;
-        this.reverse = options.reverseThreshold  === undefined ? false : options.reverseThreshold;
+        this.reverse = options.reverseThreshold === undefined ? false : options.reverseThreshold;
 
-        this.minP = minP;
-        this.maxP = maxP;
+        this.minP = options.minP === undefined ? 1 : options.minP;
+        this.maxP = options.maxP === undefined ? 1 : options.maxP;
 
         this.teamed = options.teamed === undefined ? true : options.teamed;
         this.overTrul = options.overTrul === undefined ? false : options.overTrul;
     }
 
     getScoresDelta(roundResult: RoundResult): Array<number> {
-        let count = this.getAndCheckTeamACount(roundResult.teamA);
         if (roundResult.trul && !this.overTrul) throw new Error('This type of round can\'t be played over trul');
 
+        let count = this.getAndCheckTeamACount(roundResult.teamA);
         let threshold = this.threshold;
         if (count == 1 && this.thresholdSolo) threshold = this.thresholdSolo;
 
@@ -63,8 +65,10 @@ export class RoundType {
             delta = this.perPlayerToScoreDelta(perP, roundResult.teamA, count);
         }
         else {
+            let j = 0
             roundResult.teamA.forEach((p, i) => {
-                let perP = this.getPerPlayerForOneTeam(roundResult.hits[0], threshold, roundResult.trul);
+                let perP = this.getPerPlayerForOneTeam(roundResult.hits[j], threshold, roundResult.trul);
+                j++;
                 let team = [false, false, false, false]
                 team[i] = true;
                 delta = addArrays(delta, this.perPlayerToScoreDelta(perP, team, 1));
@@ -75,11 +79,17 @@ export class RoundType {
     }
 
     private getPerPlayerForOneTeam(teamScore: number, threshold: number, trul: boolean): number {
-        let won = this.reverse ? !(teamScore < threshold) : teamScore < threshold;
-        let perP = (teamScore - threshold) * this.over * (this.reverse ? -1 : 1) + (won ? this.base : -this.base);
-        if (won && (teamScore == (this.reverse ? 0 : 13) || trul)) perP *= Math.max(this.kaputMod, 2);
+        let won = this.reverse ? teamScore <= threshold : teamScore >= threshold;
+
+        let perP =  (this.reverse ? -1 : 1) * (teamScore - threshold) * this.over  + (won ? this.base : -this.base);
+
+        if (won && (teamScore == (this.reverse ? 0 : 13))) {
+            if(trul) perP *= Math.max(this.kaputMod, 2);
+            else perP *= this.kaputMod;
+        }
         else if (!won) perP *= this.loseMod;
-        return perP;
+
+        return Math.round(perP);
     }
 
     private perPlayerToScoreDelta(perP: number, team: Array<boolean>, count: number): number[] {

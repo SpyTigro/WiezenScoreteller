@@ -9,14 +9,18 @@ import HistoryTable from "./historyTable/HistoryTable.js";
 import { Game } from "./Game/Game.js";
 import { RoundType } from "./Game/RoundType.js";
 
-let game: Game, 
-PS: PlayerInitializer, 
-RTI: RoundTypeInitializer, 
-ST: HistoryTable<number>, 
-AS: ActionSelector;
+let game: Game,
+    PS: PlayerInitializer,
+    RTI: RoundTypeInitializer,
+    ST: HistoryTable<number>,
+    AS: ActionSelector;
 
 let players = new Array<string>;
-let roundTypes: Array<RoundType> = [];
+let roundTypes: Array<RoundType> = 
+    [new RoundType('Standaard', 2, 8, {over: 1, thresholdSolo: 5, teamed: true, kaputMod: 1.4, loseMod: 2, overTrul: true, reverseThreshold: false, minP: 1, maxP : 2}),
+    new RoundType('Miserie', 5, 0, {reverseThreshold: true, teamed: false, minP: 1, maxP: 4}),
+    new RoundType('Open Miserie', 10, 0, {reverseThreshold: true, teamed: false, overTrul: true, minP: 1, maxP: 4})
+];
 let scores = new Array<number>;
 
 let loadedFile: File | undefined = undefined;
@@ -51,17 +55,16 @@ window.onload = function () {
 }
 
 window.addEventListener('beforeunload', function (e) {
-    e.preventDefault(); 
+    e.preventDefault();
 
     e.returnValue = '';
 });
 
-function removeLastBtnClickHandler(e: Event){
-    if(ST && confirm('are you sure you want to delete, you cant reverse this action')) { 
-        scores = ST.removeLast();
-        if(AS) AS.previousDeler();
-        if(PS) PS.previousDeler();
-        if(scores.length == 0) players.forEach(p => scores.push(0));
+function removeLastBtnClickHandler(e: Event) {
+    if (ST && confirm('are you sure you want to delete, you cant reverse this action')) {
+        ST.removeLast();
+        if (game) game.removeRound();
+        if (PS) PS.previousDeler();
     }
 }
 
@@ -75,25 +78,32 @@ function start(actionBtn: HTMLElement) {
     try {
         let newPlayers = PS.lock();
         let playersChanged = false;
-        if(players.length != newPlayers.length)
+        if (players.length != newPlayers.length)
             playersChanged = true;
         else
-            for(let i = 0; i < players.length && !playersChanged; i++)
-                if(newPlayers[i] != players[i])
+            for (let i = 0; i < players.length && !playersChanged; i++)
+                if (newPlayers[i] != players[i])
                     playersChanged = true;
 
         players = newPlayers;
 
-        game = new Game(players, RTI.types, PS.getDeler()
-    );
+        roundTypes = RTI.lock()
+        console.log(roundTypes);
+
+        if(ST){
+            game = new Game(players, roundTypes, PS.getDeler(), ST.getTable());
+        } else
+        game = new Game(players, roundTypes, PS.getDeler());
 
         AS = new ActionSelector('ActionSelector', game);
 
-        if(actionBtn) actionBtn.innerHTML = 'Calc and Add Score';
+        ST = new HistoryTable('ScoreTable', players, game.scores);
 
-        if(saveloadBtn) saveloadBtn.innerHTML = 'Save';
+        if (actionBtn) actionBtn.innerHTML = 'Calc and add score';
 
-        if(fileInDiv) fileInDiv.hidden = true;
+        if (saveloadBtn) saveloadBtn.innerHTML = 'Save';
+
+        if (fileInDiv) fileInDiv.hidden = true;
     }
     catch (e) {
         alert(e);
@@ -104,12 +114,12 @@ function start(actionBtn: HTMLElement) {
 
 function calc() {
     try {
-        let deltaScores = AS.getScoreDelta();
+        let roundResult = AS.roundResult;
 
-        for (let i = 0; i < scores.length; i++) {
-            scores[i] += deltaScores[i];
-        }
-        ST.addEntry(scores);
+        game.addRound(roundResult);
+
+        AS = new ActionSelector('ActionSelector', game);
+        ST.addEntry(game.currentScore);
         return;
     }
     catch (e) {
@@ -127,9 +137,9 @@ function saveLoadBtnClickHandler(e: Event) {
 function save() {
     let saveObj = {
         players: players,
-        modes: roundTypes,
-        deler: AS.getDeler(),
-        scoreTable: ST.getTable(),
+        types: roundTypes,
+        deler: game.deler,
+        scoreTable: game.scores,
     }
 
     let jsonStr = JSON.stringify(saveObj);
@@ -172,15 +182,15 @@ function save() {
 function load(btn: HTMLElement) {
     if (!fileInEl) return;
 
-    const file = fileInEl.files? fileInEl.files[0]: undefined;
-    if(!file) return;
+    const file = fileInEl.files ? fileInEl.files[0] : undefined;
+    if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
             const text = e.target?.result as string;
             console.log(text);
             let loadObj = JSON.parse(text);
-            if (!loadObj.players || !loadObj.modes || !loadObj.scoreTable || loadObj.deler == undefined) {
+            if (!loadObj.players || !loadObj.scoreTable || loadObj.deler == undefined) {
                 alert('invalid file');
                 return;
             }
@@ -189,18 +199,13 @@ function load(btn: HTMLElement) {
             PS.setPlayers(players);
             PS.setDeler(loadObj.deler);
 
-            for (let i = 0; i < roundTypes.length; i++) {
-                let loadedMode = loadObj.modes[i]
-                roundTypes[i] = roundTypes[i].clone(loadedMode.name, loadedMode.base, loadedMode.over);
-            }
-            RTI = new ModeInitializer('ModeSelector', roundTypes);
+            if(loadObj.types)
+                roundTypes = loadObj.types;
+            RTI = new RoundTypeInitializer('ModeSelector', roundTypes);
 
             let tempScores = loadObj.scoreTable as Array<Array<number>>;
 
-            ST = new HistoryTable<number>('ScoreTable', players);
-
-            tempScores.forEach(e => ST.addEntry(e));
-            scores = tempScores[tempScores.length - 1];
+            ST = new HistoryTable<number>('ScoreTable', players, tempScores);
 
             loadedFile = file;
         } catch (er) {

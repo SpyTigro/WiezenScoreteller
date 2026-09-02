@@ -1,25 +1,23 @@
 import { Game } from '../Game/Game.js';
+import { RoundResult } from '../Game/RoundResult.js';
+import { RoundType } from '../Game/RoundType.js';
 
 export default class ActionSelector {
-    private deler: number;
-    private players: Array<string>;
-    private modes: Array<ActionMode>;
+    private game: Game;
 
     private checkedP: Array<boolean>;
-    private checkedM: number = -1;
+    private checkedM: number = 0;
     private trul: boolean = false;
-    private slagen: number = 0;
+    private slagen: Array<number> = [0];
 
     private htmlId: string;
     private HTMLDiv: HTMLElement;
+    private slagenSelectorDiv: HTMLDivElement;
 
     constructor(htmlId: string, game: Game) {
         this.htmlId = htmlId;
-        this.deler = deler;
-        if (players.length < 4 || players.length > 5) throw new Error('Incorrect amount of players');
-        this.players = players;
-        this.modes = modes;
-        this.checkedP = new Array<boolean>(players.length);
+        this.game = game;
+        this.checkedP = new Array<boolean>(game.players.length);
 
         let div = document.getElementById(htmlId);
         if (!div) {
@@ -30,55 +28,36 @@ export default class ActionSelector {
         div.innerHTML = '';
         this.HTMLDiv = div;
 
-        players.forEach(p => {
-            this.HTMLDiv.appendChild(this.makePlayerCheckDiv(p, players.indexOf(p)));
+        game.players.forEach(p => {
+            this.HTMLDiv.appendChild(this.makePlayerCheckDiv(p, game.players.indexOf(p)));
         });
 
 
         let titleEl = document.createElement('h1');
-        titleEl.innerText = 'Modes:';
+        titleEl.innerText = 'Types:';
         this.HTMLDiv.appendChild(titleEl);
-        this.HTMLDiv.appendChild(this.makeModeSelector());
+        this.HTMLDiv.appendChild(this.makeTypeSelector());
+
+        this.slagenSelectorDiv = document.createElement('div')
+        this.slagenSelectorDiv.id = `${div.id}-slagenSelector`;
+        this.HTMLDiv.appendChild(this.slagenSelectorDiv);
 
     }
 
-    getScoreDelta(): Array<number> {
-        if(this.checkedM<0)
-            throw new Error('No mode selected');
-
-        let deltaScores = this.modes[this.checkedM].getScoreDelta(this.checkedP, this.deler, this.trul);
-        this.nextDeler();
-        return deltaScores;
-    }
-
-    nextDeler() {
-        this.deler = (this.deler + 1) % this.players.length
-        this.setDeler(this.deler);
-    }
-
-    previousDeler() {
-        this.deler = (this.deler - 1) % this.players.length
-        this.setDeler(this.deler);
-    }
-
-    setDeler(deler: number){
-        this.deler = deler
-        for (let i = 0; i < this.players.length; i++) {
-            let labelEl = document.getElementById(`${this.htmlId}-check-ilabel${i}`);
-            if (!labelEl) continue;
-            if (i == this.deler) labelEl.className = 'deler';
-            else labelEl.className = '';
+    get roundResult(): RoundResult {
+        if (this.slagen.reduce((total, cur) => total + cur, 0) > 13) throw new Error('teveel slagen');
+        return {
+            teamA: this.checkedP,
+            hits: this.slagen,
+            typeId: this.game.roundTypes[this.checkedM].typeId,
+            trul: this.trul
         }
     }
 
-    getDeler(): number {
-        return this.deler;
-    }
-
-    private makeModeSelector(): HTMLElement {
-        const radioName = 'mode';
+    private makeTypeSelector(): HTMLElement {
+        const radioName = 'type';
         let div = document.createElement('div');
-        div.id = `${this.htmlId}-modes`;
+        div.id = `${this.htmlId}-types`;
         div.className = 'Selector';
 
         const DivEl = document.createElement('div');
@@ -87,10 +66,7 @@ export default class ActionSelector {
         const checkEl = document.createElement('input');
         checkEl.type = 'checkbox';
         checkEl.id = `${div.id}-trul-check`;
-        checkEl.value = 'trul';
-        checkEl.addEventListener('change', e => {
-            this.trul = checkEl.checked;
-        });
+        checkEl.checked = this.trul;
 
         const labelEl = document.createElement('label');
         if (checkEl.checked) labelEl.className = 'checked';
@@ -101,6 +77,7 @@ export default class ActionSelector {
         labelEl.style.pointerEvents = 'auto';
 
         checkEl.addEventListener('change', e => {
+            this.trul = checkEl.checked;
             if (checkEl.checked) {
                 labelEl.className = 'checked';
             }
@@ -117,11 +94,8 @@ export default class ActionSelector {
         HrEl.className = "checkRadioDivider";
         div.appendChild(HrEl);
 
-        let slagenSelectorDiv = document.createElement('div')
-        slagenSelectorDiv.id = `${div.id}-slagenSelector`;
-
-        for (let i = 0; i < this.modes.length; i++) {
-            let l = this.modes[i].name;
+        for (let i = 0; i < this.game.roundTypes.length; i++) {
+            let l = this.game.roundTypes[i].typeId;
             if (!l) l = "";
 
             const DivEl = document.createElement('div');
@@ -132,6 +106,7 @@ export default class ActionSelector {
             RadioEl.name = `${div.id}-${radioName}`;
             RadioEl.id = `${div.id}-${l}`;
             RadioEl.value = l;
+            RadioEl.checked = i == this.checkedM;
 
             const radiolabelEl = document.createElement('label');
             if (RadioEl.checked) radiolabelEl.className = 'checked';
@@ -139,7 +114,7 @@ export default class ActionSelector {
             radiolabelEl.textContent = l;
             radiolabelEl.htmlFor = RadioEl.id;
 
-            RadioEl.addEventListener('change', () => {
+            RadioEl.addEventListener('input', () => {
                 const allLabels = div.querySelectorAll('label');
                 allLabels.forEach(l => {
                     l.className = 'check';
@@ -148,7 +123,7 @@ export default class ActionSelector {
                     }
                     if (RadioEl.checked) {
                         this.checkedM = i;
-                        this.modes[this.checkedM].renderSlagenSelector(slagenSelectorDiv.id, this.players);
+                        this.renderSlagenSelector();
                     }
                 })
             });
@@ -157,8 +132,6 @@ export default class ActionSelector {
             DivEl.appendChild(radiolabelEl);
             div.appendChild(DivEl);
         };
-
-        div.appendChild(slagenSelectorDiv);
 
         return div;
     }
@@ -179,7 +152,7 @@ export default class ActionSelector {
         ilabelEl.id = `${this.htmlId}-check-ilabel${i}`;
         ilabelEl.style.marginRight = '5px';
         ilabelEl.innerText = `${i + 1}.`;
-        if (i == this.deler) ilabelEl.className = 'deler';
+        if (i == this.game.deler) ilabelEl.className = 'deler';
 
         let labelEl = document.createElement('label');
         labelEl.htmlFor = checkEl.id;
@@ -191,11 +164,78 @@ export default class ActionSelector {
             this.checkedP[i] = checkEl.checked;
             if (checkEl.checked) labelEl.className = 'checked';
             else labelEl.className = 'check';
+            this.renderSlagenSelector();
         });
 
         div.appendChild(ilabelEl);
         div.appendChild(checkEl);
         div.appendChild(labelEl);
         return div
+    }
+
+    private renderSlagenSelector() {
+        let type = this.game.roundTypes[this.checkedM];
+
+        this.slagenSelectorDiv.innerHTML = '';
+        if (type.teamed) {
+            this.setSlagenLength(1);
+            this.slagenSelectorDiv.appendChild(this.makeSlagenSlider(0, 'Slagen: '));
+        } 
+        else {
+            const selectedPlayers = this.game.players.filter((_, i) => this.checkedP[i]);
+            this.setSlagenLength(selectedPlayers.length)
+            selectedPlayers.forEach((p, i) => {
+                this.slagenSelectorDiv.appendChild(this.makeSlagenSlider(i, `Slagen voor ${p}: `));
+            })
+        }
+    }
+
+    private setSlagenLength(length: number): void {
+        if (this.slagen.length > length) {
+            this.slagen = this.slagen.slice(0, length);
+        } else if (this.slagen.length < length) {
+            this.slagen = [...this.slagen, ...new Array(length - this.slagen.length).fill(0)];
+        }
+    }
+
+    private makeSlagenSlider(i: number, label: string): HTMLElement {
+        const div = document.createElement('div');
+
+        let numInEl = document.createElement('input');
+        numInEl.type = 'number';
+        numInEl.id = `${div.id}-slagen-num${i}`;
+        numInEl.min = '0';
+        numInEl.max = '13';
+        numInEl.value = String(this.slagen[i]);
+
+        let sliderEl = document.createElement('input');
+        sliderEl.type = 'range';
+        sliderEl.id = `${div.id}-slagen-slider${i}`;
+        sliderEl.min = '0';
+        sliderEl.max = '13';
+        sliderEl.value = String(this.slagen[i]);
+
+        numInEl.addEventListener('input', e => {
+            this.slagen[i] = Number(numInEl.value);
+            if (this.slagen[i] > 13) this.slagen[i] = 13;
+            else if (this.slagen[i] < 0) this.slagen[i] = 0;
+            numInEl.value = String(this.slagen[i]);
+            sliderEl.value = String(this.slagen[i]);
+        });
+        sliderEl.addEventListener('input', e => {
+            this.slagen[i] = Number(sliderEl.value);
+            numInEl.value = String(this.slagen[i]);
+        });
+
+        let labelEl = document.createElement('label');
+        labelEl.htmlFor = numInEl.id;
+        labelEl.innerText = label;
+        labelEl.style.marginRight = '5px';
+
+        div.appendChild(labelEl);
+        div.appendChild(numInEl);
+        div.appendChild(document.createElement('br'));
+        div.appendChild(sliderEl);
+        return div;
     }
 }
