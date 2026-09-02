@@ -6,9 +6,10 @@ import { Game } from "./Game/Game.js";
 import { RoundType } from "./Game/RoundType.js";
 let game, PS, RTI, ST, AS;
 let players = new Array;
-let roundTypes = [new RoundType('Standaard', 2, 8, { over: 1, thresholdSolo: 5, teamed: true, kaputMod: 1.4, loseMod: 2, overTrul: true, reverseThreshold: false, minP: 1, maxP: 2 }),
+let roundTypes = [new RoundType('Standaard', 2, 8, { over: 1, thresholdSolo: 5, kaputMod: 1.4, loseMod: 2, overTrul: true, reverseThreshold: false, minP: 1, maxP: 2 }),
     new RoundType('Miserie', 5, 0, { reverseThreshold: true, teamed: false, minP: 1, maxP: 4 }),
-    new RoundType('Open Miserie', 10, 0, { reverseThreshold: true, teamed: false, overTrul: true, minP: 1, maxP: 4 })
+    new RoundType('Open Miserie', 10, 0, { reverseThreshold: true, teamed: false, overTrul: true, minP: 1, maxP: 4 }),
+    new RoundType('Negen', 5, 9, { maxP: 1 })
 ];
 let scores = new Array;
 let loadedFile = undefined;

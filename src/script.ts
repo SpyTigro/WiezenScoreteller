@@ -16,11 +16,12 @@ let game: Game,
     AS: ActionSelector;
 
 let players = new Array<string>;
-let roundTypes: Array<RoundType> = 
-    [new RoundType('Standaard', 2, 8, {over: 1, thresholdSolo: 5, teamed: true, kaputMod: 1.4, loseMod: 2, overTrul: true, reverseThreshold: false, minP: 1, maxP : 2}),
-    new RoundType('Miserie', 5, 0, {reverseThreshold: true, teamed: false, minP: 1, maxP: 4}),
-    new RoundType('Open Miserie', 10, 0, {reverseThreshold: true, teamed: false, overTrul: true, minP: 1, maxP: 4})
-];
+let roundTypes: Array<RoundType> =
+    [new RoundType('Standaard', 2, 8, { over: 1, thresholdSolo: 5, kaputMod: 1.4, loseMod: 2, overTrul: true, reverseThreshold: false, minP: 1, maxP: 2 }),
+    new RoundType('Miserie', 5, 0, { reverseThreshold: true, teamed: false, minP: 1, maxP: 4 }),
+    new RoundType('Open Miserie', 10, 0, { reverseThreshold: true, teamed: false, overTrul: true, minP: 1, maxP: 4 }),
+    new RoundType('Negen', 5, 9, { maxP: 1 })
+    ];
 let scores = new Array<number>;
 
 let loadedFile: File | undefined = undefined;
@@ -63,7 +64,10 @@ window.addEventListener('beforeunload', function (e) {
 function removeLastBtnClickHandler(e: Event) {
     if (ST && confirm('are you sure you want to delete, you cant reverse this action')) {
         ST.removeLast();
-        if (game) game.removeRound();
+        if (game) {
+            game.removeRound();
+            AS = new ActionSelector('ActionSelector', game);
+        }
         if (PS) PS.previousDeler();
     }
 }
@@ -90,14 +94,15 @@ function start(actionBtn: HTMLElement) {
         roundTypes = RTI.lock()
         console.log(roundTypes);
 
-        if(ST){
+        if (ST) {
             game = new Game(players, roundTypes, PS.getDeler(), ST.getTable());
-        } else
-        game = new Game(players, roundTypes, PS.getDeler());
+        }
+        else {
+            game = new Game(players, roundTypes, PS.getDeler());
+            ST = new HistoryTable('ScoreTable', players);
+        }
 
         AS = new ActionSelector('ActionSelector', game);
-
-        ST = new HistoryTable('ScoreTable', players, game.scores);
 
         if (actionBtn) actionBtn.innerHTML = 'Calc and add score';
 
@@ -199,7 +204,7 @@ function load(btn: HTMLElement) {
             PS.setPlayers(players);
             PS.setDeler(loadObj.deler);
 
-            if(loadObj.types)
+            if (loadObj.types)
                 roundTypes = loadObj.types;
             RTI = new RoundTypeInitializer('ModeSelector', roundTypes);
 

@@ -9,7 +9,7 @@ export class Game {
 
     readonly roundTypes: Array<RoundType>;
 
-    private rounds: Array<RoundResult> = new Array<RoundResult>();
+    //private rounds: Array<RoundResult> = new Array<RoundResult>();
     private scoreTable: Array<Array<number>> = new Array<Array<number>>;
     
     get deler(): number { 
@@ -47,7 +47,7 @@ export class Game {
     addRound(roundResult: RoundResult) {
         if (roundResult.teamA.length != 4) throw new Error('Incorrect size of teamA array');
 
-        this.rounds.push(roundResult);
+        // this.rounds.push(roundResult);
         this.currentScores = this.newScores(roundResult);
         this.scoreTable.push(this.currentScores);
 
@@ -55,10 +55,11 @@ export class Game {
     }
 
     removeRound() {
-        let roundResult = this.rounds.pop();
-        if (!roundResult) return;
+        // let roundResult = this.rounds.pop();
+        // if (!roundResult) return;
 
-        this.scoreTable.pop();
+        let oldScore = this.scoreTable.pop();
+        if(!oldScore) return;
         this.currentScores = this.scoreTable[this.scoreTable.length - 1];
 
         this._deler = (this._deler - 1) % this.players.length;

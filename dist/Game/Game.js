@@ -10,7 +10,7 @@ export class Game {
         return this.currentScores;
     }
     constructor(players, roundTypes, deler = 0, scoreTable) {
-        this.rounds = new Array();
+        //private rounds: Array<RoundResult> = new Array<RoundResult>();
         this.scoreTable = new Array;
         if (players.length < 4 || players.length > 5)
             throw new Error('Too many players');
@@ -30,16 +30,17 @@ export class Game {
     addRound(roundResult) {
         if (roundResult.teamA.length != 4)
             throw new Error('Incorrect size of teamA array');
-        this.rounds.push(roundResult);
+        // this.rounds.push(roundResult);
         this.currentScores = this.newScores(roundResult);
         this.scoreTable.push(this.currentScores);
         this._deler = (this._deler + 1) % this.players.length;
     }
     removeRound() {
-        let roundResult = this.rounds.pop();
-        if (!roundResult)
+        // let roundResult = this.rounds.pop();
+        // if (!roundResult) return;
+        let oldScore = this.scoreTable.pop();
+        if (!oldScore)
             return;
-        this.scoreTable.pop();
         this.currentScores = this.scoreTable[this.scoreTable.length - 1];
         this._deler = (this._deler - 1) % this.players.length;
     }

@@ -154,12 +154,12 @@ export class RoundTypeInitializer {
 
         addAttributeBtn.addEventListener('click', () => {
             let i = attributeSelect.selectedIndex;
-            const option = document.getElementById(`${this.htmlId}-attributeSelectOption${id}${i}`);
+            const option = document.getElementById(`${this.htmlId}-attributeSelectOption${id}${i}`) as HTMLOptionElement;
             if (option) {
-                option.hidden = true;
+                option.disabled = true;
 
                 const remainingVisibleOptionIndex = Array.from(attributeSelect.options)
-                    .findIndex((selectOption, optionIndex) => optionIndex !== i && !selectOption.hidden);
+                    .findIndex((selectOption, optionIndex) => optionIndex !== i && !selectOption.disabled);
 
                 attributeSelect.selectedIndex = remainingVisibleOptionIndex >= 0
                     ? remainingVisibleOptionIndex
@@ -182,10 +182,10 @@ export class RoundTypeInitializer {
             Array.from(attributeSelect.options).forEach((o, i) => {
                 const option = o;
                 if (option) {
-                    option.hidden = true;
+                    option.disabled = true;
 
                     const remainingVisibleOptionIndex = Array.from(attributeSelect.options)
-                        .findIndex((selectOption, optionIndex) => optionIndex !== i && !selectOption.hidden);
+                        .findIndex((selectOption, optionIndex) => optionIndex !== i && !selectOption.disabled);
 
                     attributeSelect.selectedIndex = remainingVisibleOptionIndex >= 0
                         ? remainingVisibleOptionIndex
@@ -201,7 +201,7 @@ export class RoundTypeInitializer {
         return div;
     }
 
-    private addAttributeSetter(id: number, option: HTMLElement, OptionDiv: HTMLDivElement, roundType?: RoundType) {
+    private addAttributeSetter(id: number, option: HTMLOptionElement, OptionDiv: HTMLDivElement, roundType?: RoundType) {
         const attributeDiv = this.rowDiv(`${this.htmlId}-attribute${option.innerText}${id}`);
 
         const removeBtn = document.createElement('button');
@@ -210,7 +210,7 @@ export class RoundTypeInitializer {
 
         removeBtn.addEventListener('click', () => {
             OptionDiv.removeChild(attributeDiv);
-            option.hidden = false;
+            option.disabled = false;
         })
 
         const attributeSetterDiv = this.attributeSetterDiv(id, option.innerText, roundType);

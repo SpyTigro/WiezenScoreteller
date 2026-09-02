@@ -18,7 +18,7 @@ export class RoundType {
         this.loseMod = options.loseMod === undefined ? 1 : options.loseMod;
         this.kaputMod = options.kaputMod === undefined ? 1 : options.kaputMod;
         this.threshold = threshold;
-        this.thresholdSolo = options.thresholdSolo;
+        this.thresholdSolo = options.thresholdSolo === undefined ? threshold : options.thresholdSolo;
         this.reverse = options.reverseThreshold === undefined ? false : options.reverseThreshold;
         this.minP = options.minP === undefined ? 1 : options.minP;
         this.maxP = options.maxP === undefined ? 1 : options.maxP;
@@ -53,13 +53,16 @@ export class RoundType {
         let won = this.reverse ? teamScore <= threshold : teamScore >= threshold;
         let perP = (this.reverse ? -1 : 1) * (teamScore - threshold) * this.over + (won ? this.base : -this.base);
         if (won && (teamScore == (this.reverse ? 0 : 13))) {
+            perP *= this.kaputMod;
             if (trul)
-                perP *= Math.max(this.kaputMod, 2);
-            else
-                perP *= this.kaputMod;
+                perP *= 2;
         }
-        else if (!won)
-            perP *= this.loseMod;
+        else if (!won) {
+            if (trul)
+                perP *= Math.max(this.loseMod, 2);
+            else
+                perP *= this.loseMod;
+        }
         return Math.round(perP);
     }
     perPlayerToScoreDelta(perP, team, count) {

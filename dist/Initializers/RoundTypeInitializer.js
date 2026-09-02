@@ -129,9 +129,9 @@ export class RoundTypeInitializer {
             let i = attributeSelect.selectedIndex;
             const option = document.getElementById(`${this.htmlId}-attributeSelectOption${id}${i}`);
             if (option) {
-                option.hidden = true;
+                option.disabled = true;
                 const remainingVisibleOptionIndex = Array.from(attributeSelect.options)
-                    .findIndex((selectOption, optionIndex) => optionIndex !== i && !selectOption.hidden);
+                    .findIndex((selectOption, optionIndex) => optionIndex !== i && !selectOption.disabled);
                 attributeSelect.selectedIndex = remainingVisibleOptionIndex >= 0
                     ? remainingVisibleOptionIndex
                     : -1;
@@ -150,9 +150,9 @@ export class RoundTypeInitializer {
             Array.from(attributeSelect.options).forEach((o, i) => {
                 const option = o;
                 if (option) {
-                    option.hidden = true;
+                    option.disabled = true;
                     const remainingVisibleOptionIndex = Array.from(attributeSelect.options)
-                        .findIndex((selectOption, optionIndex) => optionIndex !== i && !selectOption.hidden);
+                        .findIndex((selectOption, optionIndex) => optionIndex !== i && !selectOption.disabled);
                     attributeSelect.selectedIndex = remainingVisibleOptionIndex >= 0
                         ? remainingVisibleOptionIndex
                         : -1;
@@ -172,7 +172,7 @@ export class RoundTypeInitializer {
         removeBtn.id = `${this.htmlId}-divAttribute${option.innerText}RBtn${id}`;
         removeBtn.addEventListener('click', () => {
             OptionDiv.removeChild(attributeDiv);
-            option.hidden = false;
+            option.disabled = false;
         });
         const attributeSetterDiv = this.attributeSetterDiv(id, option.innerText, roundType);
         if (attributeSetterDiv) {
