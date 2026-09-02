@@ -1,27 +1,28 @@
 
 import PlayerInitializer from "./Initializers/PlayerInitializer.js";
-import ModeInitializer from "./Initializers/ModeInitializer.js";
+import { RoundTypeInitializer } from "./Initializers/RoundTypeInitializer.js";
 
 import ActionSelector from "./actionSelector/ActionSelector.js";
 
 import HistoryTable from "./historyTable/HistoryTable.js";
 
-import ActionMode from "./actionSelector/ActionMode.js";
-import StandardMode from "./actionSelector/StandardMode.js";
-import MiserieMode from "./actionSelector/MiserieMode.js";
-import AbondanceMode from "./actionSelector/AbondanceMode.js";
+import { Game } from "./Game/Game.js";
+import { RoundType } from "./Game/RoundType.js";
 
-let PS: PlayerInitializer, MS: ModeInitializer, ST: HistoryTable<number>, AS: ActionSelector;
+let game: Game,
+    PS: PlayerInitializer,
+    RTI: RoundTypeInitializer,
+    ST: HistoryTable<number>,
+    AS: ActionSelector;
+
 let players = new Array<string>;
-let modes: Array<ActionMode> = [new StandardMode('Standaard', 2, 1),
-new MiserieMode('Miserie', 5),
-new MiserieMode('Open Miserie', 10),
-new AbondanceMode('Negen', 9, 5),
-new AbondanceMode('Tien', 10, 5),
-new AbondanceMode('Elf', 11, 5),
-new AbondanceMode('Twaalf', 12, 5),
-new AbondanceMode('Solo', 13, 15),
-];
+let roundTypes: Array<RoundType> =
+    [new RoundType('Standaard', 2, 8, { over: 1, thresholdSolo: 5, kaputMod: 1.45, loseMod: 2, overTrul: true, reverseThreshold: false, minP: 1, maxP: 2 }),
+    new RoundType('Miserie', 5, 0, { reverseThreshold: true, teamed: false, minP: 1, maxP: 4 }),
+    new RoundType('Open Miserie', 10, 0, { reverseThreshold: true, teamed: false, overTrul: true, minP: 1, maxP: 4 }),
+    new RoundType('Negen', 5, 9, { maxP: 1, teamed: false }),
+    new RoundType('Solo', 15, 13, { maxP: 1, teamed: false, overTrul: true })
+    ];
 let scores = new Array<number>;
 
 let loadedFile: File | undefined = undefined;
@@ -34,7 +35,7 @@ let actionBtn: HTMLButtonElement,
 
 window.onload = function () {
     PS = new PlayerInitializer('PlayerSelector', 5, 4);
-    MS = new ModeInitializer('ModeSelector', modes);
+    RTI = new RoundTypeInitializer('ModeSelector', roundTypes);
 
     actionBtn = document.getElementById('ActionButton') as HTMLButtonElement;
     if (actionBtn) actionBtn.addEventListener('click', actionBtnClickHandler);
@@ -56,17 +57,19 @@ window.onload = function () {
 }
 
 window.addEventListener('beforeunload', function (e) {
-    e.preventDefault(); 
+    e.preventDefault();
 
     e.returnValue = '';
 });
 
-function removeLastBtnClickHandler(e: Event){
-    if(ST && confirm('are you sure you want to delete, you cant reverse this action')) { 
-        scores = ST.removeLast();
-        if(AS) AS.previousDeler();
-        if(PS) PS.previousDeler();
-        if(scores.length == 0) players.forEach(p => scores.push(0));
+function removeLastBtnClickHandler(e: Event) {
+    if (ST && confirm('are you sure you want to delete, you cant reverse this action')) {
+        ST.removeLast();
+        if (game) {
+            game.removeRound();
+            AS = new ActionSelector('ActionSelector', game);
+        }
+        if (PS) PS.previousDeler();
     }
 }
 
@@ -80,30 +83,33 @@ function start(actionBtn: HTMLElement) {
     try {
         let newPlayers = PS.lock();
         let playersChanged = false;
-        if(players.length != newPlayers.length)
+        if (players.length != newPlayers.length)
             playersChanged = true;
         else
-            for(let i = 0; i < players.length && !playersChanged; i++)
-                if(newPlayers[i] != players[i])
+            for (let i = 0; i < players.length && !playersChanged; i++)
+                if (newPlayers[i] != players[i])
                     playersChanged = true;
 
         players = newPlayers;
-        modes = MS.lock();
 
-        if (!ST || playersChanged) {
-            ST = new HistoryTable<number>('ScoreTable', players);
+        roundTypes = RTI.lock()
+        console.log(roundTypes);
 
-            scores = new Array<number>;
-            players.forEach(p => scores.push(0));
-            ST.addEntry(scores);
+        if (ST) {
+            game = new Game(players, roundTypes, PS.getDeler(), ST.getTable());
         }
-        AS = new ActionSelector('ActionSelector', players, modes, PS.getDeler());
+        else {
+            game = new Game(players, roundTypes, PS.getDeler());
+            ST = new HistoryTable('ScoreTable', players);
+        }
 
-        if(actionBtn) actionBtn.innerHTML = 'Calc and Add Score';
+        AS = new ActionSelector('ActionSelector', game);
 
-        if(saveloadBtn) saveloadBtn.innerHTML = 'Save';
+        if (actionBtn) actionBtn.innerHTML = 'Calc and add score';
 
-        if(fileInDiv) fileInDiv.hidden = true;
+        if (saveloadBtn) saveloadBtn.innerHTML = 'Save';
+
+        if (fileInDiv) fileInDiv.hidden = true;
     }
     catch (e) {
         alert(e);
@@ -114,12 +120,12 @@ function start(actionBtn: HTMLElement) {
 
 function calc() {
     try {
-        let deltaScores = AS.getScoreDelta();
+        let roundResult = AS.roundResult;
 
-        for (let i = 0; i < scores.length; i++) {
-            scores[i] += deltaScores[i];
-        }
-        ST.addEntry(scores);
+        game.addRound(roundResult);
+
+        AS = new ActionSelector('ActionSelector', game);
+        ST.addEntry(game.currentScore);
         return;
     }
     catch (e) {
@@ -137,9 +143,9 @@ function saveLoadBtnClickHandler(e: Event) {
 function save() {
     let saveObj = {
         players: players,
-        modes: modes,
-        deler: AS.getDeler(),
-        scoreTable: ST.getTable(),
+        types: roundTypes,
+        deler: game.deler,
+        scoreTable: game.scores,
     }
 
     let jsonStr = JSON.stringify(saveObj);
@@ -182,15 +188,15 @@ function save() {
 function load(btn: HTMLElement) {
     if (!fileInEl) return;
 
-    const file = fileInEl.files? fileInEl.files[0]: undefined;
-    if(!file) return;
+    const file = fileInEl.files ? fileInEl.files[0] : undefined;
+    if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
             const text = e.target?.result as string;
             console.log(text);
             let loadObj = JSON.parse(text);
-            if (!loadObj.players || !loadObj.modes || !loadObj.scoreTable || loadObj.deler == undefined) {
+            if (!loadObj.players || !loadObj.scoreTable || loadObj.deler == undefined) {
                 alert('invalid file');
                 return;
             }
@@ -199,18 +205,13 @@ function load(btn: HTMLElement) {
             PS.setPlayers(players);
             PS.setDeler(loadObj.deler);
 
-            for (let i = 0; i < modes.length; i++) {
-                let loadedMode = loadObj.modes[i]
-                modes[i] = modes[i].clone(loadedMode.name, loadedMode.base, loadedMode.over);
-            }
-            MS = new ModeInitializer('ModeSelector', modes);
+            if (loadObj.types)
+                roundTypes = loadObj.types;
+            RTI = new RoundTypeInitializer('ModeSelector', roundTypes);
 
             let tempScores = loadObj.scoreTable as Array<Array<number>>;
 
-            ST = new HistoryTable<number>('ScoreTable', players);
-
-            tempScores.forEach(e => ST.addEntry(e));
-            scores = tempScores[tempScores.length - 1];
+            ST = new HistoryTable<number>('ScoreTable', players, tempScores);
 
             loadedFile = file;
         } catch (er) {
