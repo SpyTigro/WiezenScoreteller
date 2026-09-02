@@ -133,12 +133,21 @@ export default class ActionSelector {
             labelEl.className = 'checked';
         else
             labelEl.className = 'check';
-        if (this.game.players.length == 5 && i != this.game.deler)
+        if ((this.game.players.length == 5 && i != this.game.deler))
             checkEl.addEventListener('change', e => {
                 if (i > this.game.deler)
                     this.checkedP[i - 1] = checkEl.checked;
                 else
                     this.checkedP[i] = checkEl.checked;
+                if (checkEl.checked)
+                    labelEl.className = 'checked';
+                else
+                    labelEl.className = 'check';
+                this.renderSlagenSelector();
+            });
+        else if (this.game.players.length == 4)
+            checkEl.addEventListener('change', e => {
+                this.checkedP[i] = checkEl.checked;
                 if (checkEl.checked)
                     labelEl.className = 'checked';
                 else
