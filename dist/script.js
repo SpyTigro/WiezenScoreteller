@@ -44,8 +44,10 @@ window.addEventListener('beforeunload', function (e) {
 function removeLastBtnClickHandler(e) {
     if (ST && confirm('are you sure you want to delete, you cant reverse this action')) {
         ST.removeLast();
-        if (game)
+        if (game) {
             game.removeRound();
+            AS = new ActionSelector('ActionSelector', game);
+        }
         if (PS)
             PS.previousDeler();
     }
@@ -73,10 +75,11 @@ function start(actionBtn) {
         if (ST) {
             game = new Game(players, roundTypes, PS.getDeler(), ST.getTable());
         }
-        else
+        else {
             game = new Game(players, roundTypes, PS.getDeler());
+            ST = new HistoryTable('ScoreTable', players);
+        }
         AS = new ActionSelector('ActionSelector', game);
-        ST = new HistoryTable('ScoreTable', players, game.scores);
         if (actionBtn)
             actionBtn.innerHTML = 'Calc and add score';
         if (saveloadBtn)

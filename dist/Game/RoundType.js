@@ -52,12 +52,13 @@ export class RoundType {
     getPerPlayerForOneTeam(teamScore, threshold, trul) {
         let won = this.reverse ? teamScore <= threshold : teamScore >= threshold;
         let perP = (this.reverse ? -1 : 1) * (teamScore - threshold) * this.over + (won ? this.base : -this.base);
-        if (won && (teamScore == (this.reverse ? 0 : 13))) {
-            perP *= this.kaputMod;
+        if (won) {
+            if (teamScore == (this.reverse ? 0 : 13))
+                perP *= this.kaputMod;
             if (trul)
                 perP *= 2;
         }
-        else if (!won) {
+        else {
             if (trul)
                 perP *= Math.max(this.loseMod, 2);
             else
