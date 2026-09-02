@@ -17,7 +17,7 @@ let game: Game,
 
 let players = new Array<string>;
 let roundTypes: Array<RoundType> =
-    [new RoundType('Standaard', 2, 8, { over: 1, thresholdSolo: 5, kaputMod: 1.4, loseMod: 2, overTrul: true, reverseThreshold: false, minP: 1, maxP: 2 }),
+    [new RoundType('Standaard', 2, 8, { over: 1, thresholdSolo: 5, kaputMod: 1.45, loseMod: 2, overTrul: true, reverseThreshold: false, minP: 1, maxP: 2 }),
     new RoundType('Miserie', 5, 0, { reverseThreshold: true, teamed: false, minP: 1, maxP: 4 }),
     new RoundType('Open Miserie', 10, 0, { reverseThreshold: true, teamed: false, overTrul: true, minP: 1, maxP: 4 }),
     new RoundType('Negen', 5, 9, { maxP: 1, teamed: false }),
