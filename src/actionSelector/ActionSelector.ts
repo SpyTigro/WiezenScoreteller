@@ -17,7 +17,7 @@ export default class ActionSelector {
     constructor(htmlId: string, game: Game) {
         this.htmlId = htmlId;
         this.game = game;
-        this.checkedP = new Array<boolean>(game.players.length);
+        this.checkedP = new Array<boolean>(4);
 
         let div = document.getElementById(htmlId);
         if (!div) {
@@ -28,8 +28,8 @@ export default class ActionSelector {
         div.innerHTML = '';
         this.HTMLDiv = div;
 
-        game.players.forEach(p => {
-            this.HTMLDiv.appendChild(this.makePlayerCheckDiv(p, game.players.indexOf(p)));
+        game.players.forEach((p, i) => {
+                this.HTMLDiv.appendChild(this.makePlayerCheckDiv(p, i));
         });
 
 
@@ -160,12 +160,17 @@ export default class ActionSelector {
         if (checkEl.checked) labelEl.className = 'checked';
         else labelEl.className = 'check';
 
-        checkEl.addEventListener('change', e => {
-            this.checkedP[i] = checkEl.checked;
-            if (checkEl.checked) labelEl.className = 'checked';
-            else labelEl.className = 'check';
-            this.renderSlagenSelector();
-        });
+        if(this.game.players.length == 5 && i != this.game.deler)
+            checkEl.addEventListener('change', e => {
+                if(i > this.game.deler)
+                    this.checkedP[i-1] = checkEl.checked;
+                else
+                    this.checkedP[i] = checkEl.checked;
+
+                if (checkEl.checked) labelEl.className = 'checked';
+                else labelEl.className = 'check';
+                this.renderSlagenSelector();
+            });
 
         div.appendChild(ilabelEl);
         div.appendChild(checkEl);
@@ -180,9 +185,9 @@ export default class ActionSelector {
         if (type.teamed) {
             this.setSlagenLength(1);
             this.slagenSelectorDiv.appendChild(this.makeSlagenSlider(0, 'Slagen: '));
-        } 
+        }
         else {
-            const selectedPlayers = this.game.players.filter((_, i) => this.checkedP[i]);
+            const selectedPlayers = this.game.players.filter((_, i) => i == this.game.deler? false : i < this.game.deler ? this.checkedP[i] : this.checkedP[i-1]);
             this.setSlagenLength(selectedPlayers.length)
             selectedPlayers.forEach((p, i) => {
                 this.slagenSelectorDiv.appendChild(this.makeSlagenSlider(i, `Slagen voor ${p}: `));
