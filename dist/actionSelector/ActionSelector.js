@@ -158,7 +158,11 @@ export default class ActionSelector {
             this.slagenSelectorDiv.appendChild(this.makeSlagenSlider(0, 'Slagen: '));
         }
         else {
-            const selectedPlayers = this.game.players.filter((_, i) => i == this.game.deler ? false : i < this.game.deler ? this.checkedP[i] : this.checkedP[i - 1]);
+            let selectedPlayers = [];
+            if (this.game.players.length == 5)
+                selectedPlayers = this.game.players.filter((_, i) => i == this.game.deler ? false : i < this.game.deler ? this.checkedP[i] : this.checkedP[i - 1]);
+            else
+                selectedPlayers = this.game.players.filter((_, i) => this.checkedP[i]);
             this.setSlagenLength(selectedPlayers.length);
             selectedPlayers.forEach((p, i) => {
                 this.slagenSelectorDiv.appendChild(this.makeSlagenSlider(i, `Slagen voor ${p}: `));

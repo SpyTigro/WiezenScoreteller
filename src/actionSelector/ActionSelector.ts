@@ -29,7 +29,7 @@ export default class ActionSelector {
         this.HTMLDiv = div;
 
         game.players.forEach((p, i) => {
-                this.HTMLDiv.appendChild(this.makePlayerCheckDiv(p, i));
+            this.HTMLDiv.appendChild(this.makePlayerCheckDiv(p, i));
         });
 
 
@@ -160,10 +160,10 @@ export default class ActionSelector {
         if (checkEl.checked) labelEl.className = 'checked';
         else labelEl.className = 'check';
 
-        if(this.game.players.length == 5 && i != this.game.deler)
+        if (this.game.players.length == 5 && i != this.game.deler)
             checkEl.addEventListener('change', e => {
-                if(i > this.game.deler)
-                    this.checkedP[i-1] = checkEl.checked;
+                if (i > this.game.deler)
+                    this.checkedP[i - 1] = checkEl.checked;
                 else
                     this.checkedP[i] = checkEl.checked;
 
@@ -187,7 +187,9 @@ export default class ActionSelector {
             this.slagenSelectorDiv.appendChild(this.makeSlagenSlider(0, 'Slagen: '));
         }
         else {
-            const selectedPlayers = this.game.players.filter((_, i) => i == this.game.deler? false : i < this.game.deler ? this.checkedP[i] : this.checkedP[i-1]);
+            let selectedPlayers = []
+            if (this.game.players.length == 5) selectedPlayers = this.game.players.filter((_, i) => i == this.game.deler ? false : i < this.game.deler ? this.checkedP[i] : this.checkedP[i - 1]);
+            else selectedPlayers = this.game.players.filter((_, i) => this.checkedP[i]);
             this.setSlagenLength(selectedPlayers.length)
             selectedPlayers.forEach((p, i) => {
                 this.slagenSelectorDiv.appendChild(this.makeSlagenSlider(i, `Slagen voor ${p}: `));
