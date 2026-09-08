@@ -23,7 +23,6 @@ let roundTypes: Array<RoundType> =
     new RoundType('Negen', 5, 9, { maxP: 1, teamed: false }),
     new RoundType('Solo', 15, 13, { maxP: 1, teamed: false, overTrul: true })
     ];
-let scores = new Array<number>;
 
 let loadedFile: File | undefined = undefined;
 

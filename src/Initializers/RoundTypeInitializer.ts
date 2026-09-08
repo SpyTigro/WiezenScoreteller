@@ -138,6 +138,7 @@ export class RoundTypeInitializer {
 
         //decorate OptionDiv
         const attributeSelectDiv = this.rowDiv(`${this.htmlId}-divSelectAtt${id}`);
+        attributeSelectDiv.className = 'checkDiv';
 
         const attributeSelect = document.createElement('select');
         roundTypeOptionKeys.forEach((a, i) => {
@@ -151,6 +152,7 @@ export class RoundTypeInitializer {
         const addAttributeBtn = document.createElement('button');
         addAttributeBtn.innerText = '+';
         addAttributeBtn.id = `${this.htmlId}-addAttributeBtn${id}`;
+        addAttributeBtn.className = 'small';
 
         addAttributeBtn.addEventListener('click', () => {
             let i = attributeSelect.selectedIndex;
@@ -203,10 +205,12 @@ export class RoundTypeInitializer {
 
     private addAttributeSetter(id: number, option: HTMLOptionElement, OptionDiv: HTMLDivElement, roundType?: RoundType) {
         const attributeDiv = this.rowDiv(`${this.htmlId}-attribute${option.innerText}${id}`);
+        attributeDiv.className = 'checkDiv';
 
         const removeBtn = document.createElement('button');
         removeBtn.innerText = '-';
         removeBtn.id = `${this.htmlId}-divAttribute${option.innerText}RBtn${id}`;
+        removeBtn.className = 'small';
 
         removeBtn.addEventListener('click', () => {
             OptionDiv.removeChild(attributeDiv);
@@ -283,12 +287,12 @@ export class RoundTypeInitializer {
     private numInWithLabel(id: number, name: string, value: number = 0): HTMLDivElement {
         const div = document.createElement('div');
         div.id = `${this.htmlId}-divNumIn${name}${id}`;
+        div.className = 'checkDiv';
 
         const InEl = document.createElement('input');
         InEl.type = 'number';
         InEl.value = String(value);
         InEl.id = `${this.htmlId}-In${name}${id}`;
-        InEl.style.width = '10%';
 
         const LabelEl = document.createElement('label') as HTMLLabelElement;
         LabelEl.htmlFor = InEl.id;

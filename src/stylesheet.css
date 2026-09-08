@@ -39,6 +39,12 @@ button {
     text-transform: uppercase;
 }
 
+button.small {
+    padding: 6px 16px;
+    border-radius: 16px;
+    margin: 2px 0;
+}
+
 button:hover,
 button:focus {
     background: #b91c1c;
@@ -47,6 +53,18 @@ button:focus {
     box-shadow: 0 4px 16px 0 rgba(185, 28, 28, 0.15);
     outline: none;
     transform: translateY(-2px) scale(1.03);
+}
+
+select {
+    font-size: 1rem;
+    border: 2px solid #b91c1c;
+    border-radius: 12px;
+    padding: 6px 12px;
+    margin: 2px 0;
+    background: #fff;
+    color: #111;
+    cursor: pointer;
+    transition: border 0.2s;
 }
 
 input {
@@ -58,6 +76,11 @@ input {
     background: #fff;
     color: #111;
     transition: border 0.2s;
+}
+
+input[type="number"] {
+    width: 60px;
+    text-align: right;
 }
 
 input[type="range"] {
