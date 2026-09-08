@@ -12,7 +12,6 @@ let roundTypes = [new RoundType('Standaard', 2, 8, { over: 1, thresholdSolo: 5, 
     new RoundType('Negen', 5, 9, { maxP: 1, teamed: false }),
     new RoundType('Solo', 15, 13, { maxP: 1, teamed: false, overTrul: true })
 ];
-let scores = new Array;
 let loadedFile = undefined;
 let actionBtn, removeLastBtn, saveloadBtn, fileInEl, fileInDiv;
 window.onload = function () {
