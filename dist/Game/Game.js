@@ -11,9 +11,9 @@ export class Game {
     }
     constructor(players, roundTypes, deler = 0, scoreTable) {
         //private rounds: Array<RoundResult> = new Array<RoundResult>();
-        this.scoreTable = new Array;
+        this.scoreTable = new Array();
         if (players.length < 4 || players.length > 5)
-            throw new Error('Too many players');
+            throw new Error("Too many players");
         this.players = players;
         this._deler = deler;
         if (scoreTable) {
@@ -29,7 +29,7 @@ export class Game {
     }
     addRound(roundResult) {
         if (roundResult.teamA.length != 4)
-            throw new Error('Incorrect size of teamA array');
+            throw new Error("Incorrect size of teamA array");
         // this.rounds.push(roundResult);
         this.currentScores = this.newScores(roundResult);
         this.scoreTable.push(this.currentScores);
@@ -56,6 +56,6 @@ export class Game {
             if (type.typeId == typeId)
                 return type;
         }
-        throw new Error('No type with this Id');
+        throw new Error("No type with this Id");
     }
 }

@@ -1,24 +1,24 @@
-import { RoundType, roundTypeOptionKeys } from "../Game/RoundType.js";
+import { RoundType, roundTypeOptionKeys, } from "../Game/RoundType.js";
 export class RoundTypeInitializer {
     constructor(htmlId, roundTypes) {
         this.htmlId = htmlId;
         let div = document.getElementById(htmlId);
         if (!div) {
-            div = document.createElement('div');
+            div = document.createElement("div");
             div.id = htmlId;
             document.body.appendChild(div);
         }
-        div.innerHTML = '';
+        div.innerHTML = "";
         this.HTMLDiv = div;
         this.roundTypes = roundTypes;
         this.amountSetters = 0;
-        let titleEl = document.createElement('h1');
-        titleEl.innerText = 'Types:';
+        let titleEl = document.createElement("h1");
+        titleEl.innerText = "Types:";
         div.appendChild(titleEl);
-        const addTypeBtn = document.createElement('button');
+        const addTypeBtn = document.createElement("button");
         addTypeBtn.id = `${this.htmlId}-addTypeBtn`;
-        addTypeBtn.innerText = '+ Add';
-        addTypeBtn.addEventListener('click', () => {
+        addTypeBtn.innerText = "+ Add";
+        addTypeBtn.addEventListener("click", () => {
             div.appendChild(this.addRoundTypeSetter(this.amountSetters));
             this.amountSetters += 1;
         });
@@ -29,7 +29,7 @@ export class RoundTypeInitializer {
         });
     }
     lock() {
-        const res = new Array;
+        const res = new Array();
         for (let i = 0; i < this.amountSetters; i++) {
             let optionals = {};
             roundTypeOptionKeys.forEach((a) => {
@@ -67,20 +67,20 @@ export class RoundTypeInitializer {
                             return;
                     }
             });
-            let typeId = '';
+            let typeId = "";
             const typeInput = document.getElementById(`${this.htmlId}-InTypeId${i}`);
             if (!typeInput)
-                throw new Error('No base Entered');
+                throw new Error("No base Entered");
             typeId = typeInput.value;
             let base = 0;
             const baseInput = document.getElementById(`${this.htmlId}-InBase${i}`);
             if (!baseInput)
-                throw new Error('No base Entered');
+                throw new Error("No base Entered");
             base = Number(baseInput.value);
             let threshold = 0;
             const thresholdInput = document.getElementById(`${this.htmlId}-InThreshold${i}`);
             if (!thresholdInput)
-                throw new Error('No base Entered');
+                throw new Error("No base Entered");
             threshold = Number(thresholdInput.value);
             res.push(new RoundType(typeId, base, threshold, optionals));
         }
@@ -90,53 +90,52 @@ export class RoundTypeInitializer {
     addRoundTypeSetter(id, roundType) {
         const div = this.columnDiv(`${this.htmlId}-setter${id}`);
         const topDiv = this.rowDiv(`${this.htmlId}-divTop${id}`);
-        const textInEl = document.createElement('input');
-        textInEl.value = roundType ? roundType.typeId : '';
+        topDiv.className = "checkDiv";
+        const textInEl = document.createElement("input");
+        textInEl.value = roundType ? roundType.typeId : "";
         textInEl.id = `${this.htmlId}-InTypeId${id}`;
-        textInEl.style.marginRight = '2px';
-        const OptionBtnEl = document.createElement('button');
-        OptionBtnEl.innerText = 'Options [Show]';
+        textInEl.style.marginRight = "2px";
+        const OptionBtnEl = document.createElement("button");
+        OptionBtnEl.innerText = "Options >";
         topDiv.appendChild(textInEl);
         topDiv.appendChild(OptionBtnEl);
         //Add Option div + show/hide
-        const OptionDiv = document.createElement('div');
+        const OptionDiv = document.createElement("div");
         OptionDiv.hidden = true;
         OptionDiv.id = `${this.htmlId}-typeoptions${id}`;
-        OptionBtnEl.addEventListener('click', () => {
+        OptionBtnEl.addEventListener("click", () => {
             if (OptionDiv.hidden) {
                 OptionDiv.hidden = false;
-                OptionBtnEl.innerText = 'Options [Hide]';
+                OptionBtnEl.innerText = "Options V";
             }
             else {
                 OptionDiv.hidden = true;
-                OptionBtnEl.innerText = 'Options [Show]';
+                OptionBtnEl.innerText = "Options >";
             }
         });
         //decorate OptionDiv
         const attributeSelectDiv = this.rowDiv(`${this.htmlId}-divSelectAtt${id}`);
-        attributeSelectDiv.className = 'checkDiv';
-        const attributeSelect = document.createElement('select');
+        attributeSelectDiv.className = "checkDiv";
+        const attributeSelect = document.createElement("select");
         roundTypeOptionKeys.forEach((a, i) => {
-            const selectOption = document.createElement('option');
+            const selectOption = document.createElement("option");
             selectOption.innerText = a;
             selectOption.id = `${this.htmlId}-attributeSelectOption${id}${i}`;
             attributeSelect.appendChild(selectOption);
         });
         attributeSelect.selectedIndex = -1;
-        const addAttributeBtn = document.createElement('button');
-        addAttributeBtn.innerText = '+';
+        const addAttributeBtn = document.createElement("button");
+        addAttributeBtn.innerText = "+";
         addAttributeBtn.id = `${this.htmlId}-addAttributeBtn${id}`;
-        addAttributeBtn.className = 'small';
-        addAttributeBtn.addEventListener('click', () => {
+        addAttributeBtn.className = "small";
+        addAttributeBtn.addEventListener("click", () => {
             let i = attributeSelect.selectedIndex;
             const option = document.getElementById(`${this.htmlId}-attributeSelectOption${id}${i}`);
             if (option) {
                 option.disabled = true;
-                const remainingVisibleOptionIndex = Array.from(attributeSelect.options)
-                    .findIndex((selectOption, optionIndex) => optionIndex !== i && !selectOption.disabled);
-                attributeSelect.selectedIndex = remainingVisibleOptionIndex >= 0
-                    ? remainingVisibleOptionIndex
-                    : -1;
+                const remainingVisibleOptionIndex = Array.from(attributeSelect.options).findIndex((selectOption, optionIndex) => optionIndex !== i && !selectOption.disabled);
+                attributeSelect.selectedIndex =
+                    remainingVisibleOptionIndex >= 0 ? remainingVisibleOptionIndex : -1;
             }
             else
                 return;
@@ -146,18 +145,16 @@ export class RoundTypeInitializer {
         attributeSelectDiv.appendChild(addAttributeBtn);
         div.appendChild(topDiv);
         OptionDiv.appendChild(attributeSelectDiv);
-        OptionDiv.appendChild(this.numInWithLabel(id, 'Base', roundType === null || roundType === void 0 ? void 0 : roundType.base));
-        OptionDiv.appendChild(this.numInWithLabel(id, 'Threshold', roundType === null || roundType === void 0 ? void 0 : roundType.threshold));
+        OptionDiv.appendChild(this.numInWithLabel(id, "Base", roundType === null || roundType === void 0 ? void 0 : roundType.base));
+        OptionDiv.appendChild(this.numInWithLabel(id, "Threshold", roundType === null || roundType === void 0 ? void 0 : roundType.threshold));
         if (roundType) {
             Array.from(attributeSelect.options).forEach((o, i) => {
                 const option = o;
                 if (option) {
                     option.disabled = true;
-                    const remainingVisibleOptionIndex = Array.from(attributeSelect.options)
-                        .findIndex((selectOption, optionIndex) => optionIndex !== i && !selectOption.disabled);
-                    attributeSelect.selectedIndex = remainingVisibleOptionIndex >= 0
-                        ? remainingVisibleOptionIndex
-                        : -1;
+                    const remainingVisibleOptionIndex = Array.from(attributeSelect.options).findIndex((selectOption, optionIndex) => optionIndex !== i && !selectOption.disabled);
+                    attributeSelect.selectedIndex =
+                        remainingVisibleOptionIndex >= 0 ? remainingVisibleOptionIndex : -1;
                 }
                 else
                     return;
@@ -169,12 +166,12 @@ export class RoundTypeInitializer {
     }
     addAttributeSetter(id, option, OptionDiv, roundType) {
         const attributeDiv = this.rowDiv(`${this.htmlId}-attribute${option.innerText}${id}`);
-        attributeDiv.className = 'checkDiv';
-        const removeBtn = document.createElement('button');
-        removeBtn.innerText = '-';
+        attributeDiv.className = "checkDiv";
+        const removeBtn = document.createElement("button");
+        removeBtn.innerText = "-";
         removeBtn.id = `${this.htmlId}-divAttribute${option.innerText}RBtn${id}`;
-        removeBtn.className = 'small';
-        removeBtn.addEventListener('click', () => {
+        removeBtn.className = "small";
+        removeBtn.addEventListener("click", () => {
             OptionDiv.removeChild(attributeDiv);
             option.disabled = false;
         });
@@ -188,19 +185,19 @@ export class RoundTypeInitializer {
         OptionDiv.appendChild(attributeDiv);
     }
     rowDiv(id) {
-        const div = document.createElement('div');
+        const div = document.createElement("div");
         div.id = id;
-        div.style.display = 'flex';
-        div.style.flexDirection = 'row';
-        div.style.alignContent = 'center'; // vertically center them
+        div.style.display = "flex";
+        div.style.flexDirection = "row";
+        div.style.alignContent = "center"; // vertically center them
         return div;
     }
     columnDiv(id) {
-        const div = document.createElement('div');
+        const div = document.createElement("div");
         div.id = id;
-        div.style.display = 'flex';
-        div.style.flexDirection = 'column';
-        div.style.alignContent = 'center'; // vertically center them
+        div.style.display = "flex";
+        div.style.flexDirection = "column";
+        div.style.alignContent = "center"; // vertically center them
         return div;
     }
     attributeSetterDiv(id, attribute, values) {
@@ -216,7 +213,11 @@ export class RoundTypeInitializer {
                 value = values ? values.kaputMod : 1;
                 break;
             case roundTypeOptionKeys[3]:
-                value = values ? values.thresholdSolo ? values.thresholdSolo : values === null || values === void 0 ? void 0 : values.threshold : 0;
+                value = values
+                    ? values.thresholdSolo
+                        ? values.thresholdSolo
+                        : values === null || values === void 0 ? void 0 : values.threshold
+                    : 0;
                 break;
             case roundTypeOptionKeys[4]:
                 value = values ? values.reverse : false;
@@ -236,51 +237,51 @@ export class RoundTypeInitializer {
             default:
                 return;
         }
-        if (typeof value === 'number')
+        if (typeof value === "number")
             return this.numInWithLabel(id, attribute, value);
         else
             return this.checkWithLabel(id, attribute, value);
     }
     numInWithLabel(id, name, value = 0) {
-        const div = document.createElement('div');
+        const div = document.createElement("div");
         div.id = `${this.htmlId}-divNumIn${name}${id}`;
-        div.className = 'checkDiv';
-        const InEl = document.createElement('input');
-        InEl.type = 'number';
+        div.className = "checkDiv";
+        const InEl = document.createElement("input");
+        InEl.type = "number";
         InEl.value = String(value);
         InEl.id = `${this.htmlId}-In${name}${id}`;
-        const LabelEl = document.createElement('label');
+        const LabelEl = document.createElement("label");
         LabelEl.htmlFor = InEl.id;
         LabelEl.id = `${this.htmlId}-labelNumIn${name}${id}`;
         LabelEl.innerText = `${name}: `;
-        LabelEl.style.marginRight = '5px';
+        LabelEl.style.marginRight = "5px";
         div.appendChild(LabelEl);
         div.appendChild(InEl);
         return div;
     }
     checkWithLabel(id, name, value = false) {
-        const div = document.createElement('div');
+        const div = document.createElement("div");
         div.id = `${this.htmlId}-divCheck${name}${id}`;
-        div.className = 'checkDiv';
-        const InEl = document.createElement('input');
-        InEl.type = 'checkbox';
+        div.className = "checkDiv";
+        const InEl = document.createElement("input");
+        InEl.type = "checkbox";
         InEl.checked = value;
         InEl.id = `${this.htmlId}-In${name}${id}`;
-        InEl.style.width = '10%';
-        const LabelEl = document.createElement('label');
+        InEl.style.width = "10%";
+        const LabelEl = document.createElement("label");
         if (InEl.checked)
-            LabelEl.className = 'checked';
+            LabelEl.className = "checked";
         else
-            LabelEl.className = 'check';
+            LabelEl.className = "check";
         LabelEl.htmlFor = InEl.id;
         LabelEl.id = `${this.htmlId}-labelCheck${name}${id}`;
         LabelEl.innerText = `${name}`;
-        LabelEl.style.marginRight = '5px';
-        InEl.addEventListener('change', () => {
+        LabelEl.style.marginRight = "5px";
+        InEl.addEventListener("change", () => {
             if (InEl.checked)
-                LabelEl.className = 'checked';
+                LabelEl.className = "checked";
             else
-                LabelEl.className = 'check';
+                LabelEl.className = "check";
         });
         div.appendChild(LabelEl);
         div.appendChild(InEl);

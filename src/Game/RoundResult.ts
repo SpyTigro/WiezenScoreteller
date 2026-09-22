@@ -3,4 +3,4 @@ export type RoundResult = {
     hits: Array<number>;
     typeId: string;
     trul: boolean;
-}
+};

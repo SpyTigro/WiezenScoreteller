@@ -1,14 +1,14 @@
 import { addArrays } from "./Util.js";
 export const roundTypeOptionKeys = [
-    'Over',
-    'Lose Mult',
-    'Kaput Mult',
-    'Threshold Solo',
-    'Reverse Threshold',
-    'In Teams',
-    'Works in Trul',
-    'Min #Players',
-    'Max #Players'
+    "Over",
+    "Lose Mult",
+    "Kaput Mult",
+    "Threshold Solo",
+    "Reverse Threshold",
+    "In Teams",
+    "Works in Trul",
+    "Min #Players",
+    "Max #Players",
 ];
 export class RoundType {
     constructor(typeId, base, threshold, options) {
@@ -18,8 +18,10 @@ export class RoundType {
         this.loseMod = options.loseMod === undefined ? 1 : options.loseMod;
         this.kaputMod = options.kaputMod === undefined ? 1 : options.kaputMod;
         this.threshold = threshold;
-        this.thresholdSolo = options.thresholdSolo === undefined ? threshold : options.thresholdSolo;
-        this.reverse = options.reverseThreshold === undefined ? false : options.reverseThreshold;
+        this.thresholdSolo =
+            options.thresholdSolo === undefined ? threshold : options.thresholdSolo;
+        this.reverse =
+            options.reverseThreshold === undefined ? false : options.reverseThreshold;
         this.minP = options.minP === undefined ? 1 : options.minP;
         this.maxP = options.maxP === undefined ? 1 : options.maxP;
         this.teamed = options.teamed === undefined ? true : options.teamed;
@@ -27,7 +29,7 @@ export class RoundType {
     }
     getScoresDelta(roundResult) {
         if (roundResult.trul && !this.overTrul)
-            throw new Error('This type of round can\'t be played over trul');
+            throw new Error("This type of round can't be played over trul");
         let count = this.getAndCheckTeamACount(roundResult.teamA);
         let threshold = this.threshold;
         if (count == 1 && this.thresholdSolo)
@@ -51,7 +53,8 @@ export class RoundType {
     }
     getPerPlayerForOneTeam(teamScore, threshold, trul) {
         let won = this.reverse ? teamScore <= threshold : teamScore >= threshold;
-        let perP = (this.reverse ? -1 : 1) * (teamScore - threshold) * this.over + (won ? this.base : -this.base);
+        let perP = (this.reverse ? -1 : 1) * (teamScore - threshold) * this.over +
+            (won ? this.base : -this.base);
         if (won) {
             if (teamScore == (this.reverse ? 0 : 13))
                 perP *= this.kaputMod;

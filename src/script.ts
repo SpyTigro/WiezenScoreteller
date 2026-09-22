@@ -1,4 +1,3 @@
-
 import PlayerInitializer from "./Initializers/PlayerInitializer.js";
 import { RoundTypeInitializer } from "./Initializers/RoundTypeInitializer.js";
 
@@ -15,14 +14,34 @@ let game: Game,
     ST: HistoryTable<number>,
     AS: ActionSelector;
 
-let players = new Array<string>;
-let roundTypes: Array<RoundType> =
-    [new RoundType('Standaard', 2, 8, { over: 1, thresholdSolo: 5, kaputMod: 1.45, loseMod: 2, overTrul: true, reverseThreshold: false, minP: 1, maxP: 2 }),
-    new RoundType('Miserie', 5, 0, { reverseThreshold: true, teamed: false, minP: 1, maxP: 4 }),
-    new RoundType('Open Miserie', 10, 0, { reverseThreshold: true, teamed: false, overTrul: true, minP: 1, maxP: 4 }),
-    new RoundType('Negen', 5, 9, { maxP: 1, teamed: false }),
-    new RoundType('Solo', 15, 13, { maxP: 1, teamed: false, overTrul: true })
-    ];
+let players = new Array<string>();
+let roundTypes: Array<RoundType> = [
+    new RoundType("Standaard", 2, 8, {
+        over: 1,
+        thresholdSolo: 5,
+        kaputMod: 1.45,
+        loseMod: 2,
+        overTrul: true,
+        reverseThreshold: false,
+        minP: 1,
+        maxP: 2,
+    }),
+    new RoundType("Miserie", 5, 0, {
+        reverseThreshold: true,
+        teamed: false,
+        minP: 1,
+        maxP: 4,
+    }),
+    new RoundType("Open Miserie", 10, 0, {
+        reverseThreshold: true,
+        teamed: false,
+        overTrul: true,
+        minP: 1,
+        maxP: 4,
+    }),
+    new RoundType("Negen", 5, 9, { maxP: 1, teamed: false }),
+    new RoundType("Solo", 15, 13, { maxP: 1, teamed: false, overTrul: true }),
+];
 
 let loadedFile: File | undefined = undefined;
 
@@ -33,40 +52,45 @@ let actionBtn: HTMLButtonElement,
     fileInDiv: HTMLDivElement;
 
 window.onload = function () {
-    PS = new PlayerInitializer('PlayerSelector', 5, 4);
-    RTI = new RoundTypeInitializer('ModeSelector', roundTypes);
+    PS = new PlayerInitializer("PlayerSelector", 5, 4);
+    RTI = new RoundTypeInitializer("ModeSelector", roundTypes);
 
-    actionBtn = document.getElementById('ActionButton') as HTMLButtonElement;
-    if (actionBtn) actionBtn.addEventListener('click', actionBtnClickHandler);
-    removeLastBtn = document.getElementById('RemoveLast') as HTMLButtonElement;
-    if (removeLastBtn) removeLastBtn.addEventListener('click', removeLastBtnClickHandler);
-    saveloadBtn = document.getElementById('SaveLoadBtn') as HTMLButtonElement;
-    if (saveloadBtn) saveloadBtn.addEventListener('click', saveLoadBtnClickHandler);
+    actionBtn = document.getElementById("ActionButton") as HTMLButtonElement;
+    if (actionBtn) actionBtn.addEventListener("click", actionBtnClickHandler);
+    removeLastBtn = document.getElementById("RemoveLast") as HTMLButtonElement;
+    if (removeLastBtn)
+        removeLastBtn.addEventListener("click", removeLastBtnClickHandler);
+    saveloadBtn = document.getElementById("SaveLoadBtn") as HTMLButtonElement;
+    if (saveloadBtn)
+        saveloadBtn.addEventListener("click", saveLoadBtnClickHandler);
 
-    fileInEl = document.getElementById('fileLoadInput') as HTMLInputElement;
-    if (fileInEl) fileInEl.addEventListener('change', e => {
-        if (fileInEl.files) {
-            let fileLoadLabel = document.getElementById('fileLoadLabel');
-            if (fileLoadLabel)
-                fileLoadLabel.innerHTML = fileInEl.files[0].name;
-        }
-    })
+    fileInEl = document.getElementById("fileLoadInput") as HTMLInputElement;
+    if (fileInEl)
+        fileInEl.addEventListener("change", (e) => {
+            if (fileInEl.files) {
+                let fileLoadLabel = document.getElementById("fileLoadLabel");
+                if (fileLoadLabel) fileLoadLabel.innerHTML = fileInEl.files[0].name;
+            }
+        });
 
-    fileInDiv = document.getElementById('fileLoad') as HTMLDivElement;
-}
+    fileInDiv = document.getElementById("fileLoad") as HTMLDivElement;
+};
 
-window.addEventListener('beforeunload', function (e) {
+window.addEventListener("beforeunload", function (e) {
     e.preventDefault();
 
-    e.returnValue = '';
+    e.returnValue = "";
 });
 
 function removeLastBtnClickHandler(e: Event) {
-    if (ST && confirm('are you sure you want to delete, you cant reverse this action')) {
+    if (
+        ST &&
+        confirm("are you sure you want to delete, you cant reverse this action")
+    ) {
         ST.removeLast();
         if (game) {
             game.removeRound();
-            AS = new ActionSelector('ActionSelector', game);
+            AS = new ActionSelector("ActionSelector", game);
         }
         if (PS) PS.previousDeler();
     }
@@ -74,7 +98,7 @@ function removeLastBtnClickHandler(e: Event) {
 
 function actionBtnClickHandler(e: Event) {
     const actionBtn = e.currentTarget as HTMLElement;
-    if (actionBtn.innerHTML == 'Start') start(actionBtn);
+    if (actionBtn.innerHTML == "Start") start(actionBtn);
     else calc();
 }
 
@@ -82,37 +106,33 @@ function start(actionBtn: HTMLElement) {
     try {
         let newPlayers = PS.lock();
         let playersChanged = false;
-        if (players.length != newPlayers.length)
-            playersChanged = true;
+        if (players.length != newPlayers.length) playersChanged = true;
         else
             for (let i = 0; i < players.length && !playersChanged; i++)
-                if (newPlayers[i] != players[i])
-                    playersChanged = true;
+                if (newPlayers[i] != players[i]) playersChanged = true;
 
         players = newPlayers;
 
-        roundTypes = RTI.lock()
+        roundTypes = RTI.lock();
         console.log(roundTypes);
 
         if (ST) {
             game = new Game(players, roundTypes, PS.getDeler(), ST.getTable());
-        }
-        else {
+        } else {
             game = new Game(players, roundTypes, PS.getDeler());
-            ST = new HistoryTable('ScoreTable', players);
+            ST = new HistoryTable("ScoreTable", players);
         }
 
-        AS = new ActionSelector('ActionSelector', game);
+        AS = new ActionSelector("ActionSelector", game);
 
-        if (actionBtn) actionBtn.innerHTML = 'Calc and add score';
+        if (actionBtn) actionBtn.innerHTML = "Calc and add score";
 
-        if (saveloadBtn) saveloadBtn.innerHTML = 'Save';
+        if (saveloadBtn) saveloadBtn.innerHTML = "Save";
 
         if (fileInDiv) fileInDiv.hidden = true;
-    }
-    catch (e) {
+    } catch (e) {
         alert(e);
-        PS = new PlayerInitializer('PlayerSelector', 5, 4);
+        PS = new PlayerInitializer("PlayerSelector", 5, 4);
     }
     return;
 }
@@ -123,11 +143,10 @@ function calc() {
 
         game.addRound(roundResult);
 
-        AS = new ActionSelector('ActionSelector', game);
+        AS = new ActionSelector("ActionSelector", game);
         ST.addEntry(game.currentScore);
         return;
-    }
-    catch (e) {
+    } catch (e) {
         alert(e);
         return;
     }
@@ -135,7 +154,7 @@ function calc() {
 
 function saveLoadBtnClickHandler(e: Event) {
     const btn = e.currentTarget as HTMLElement;
-    if (btn.innerHTML == 'Load') load(btn);
+    if (btn.innerHTML == "Load") load(btn);
     else save();
 }
 
@@ -145,7 +164,7 @@ function save() {
         types: roundTypes,
         deler: game.deler,
         scoreTable: game.scores,
-    }
+    };
 
     let jsonStr = JSON.stringify(saveObj);
 
@@ -154,28 +173,31 @@ function save() {
     if (window.showSaveFilePicker) {
         // @ts-ignore
         window.showSaveFilePicker({
-            suggestedName: 'wiezen_score.json',
+            suggestedName: "wiezen_score.json",
             types: [
                 {
-                    description: 'JSON Files',
-                    accept: { 'application/json': ['.json'] },
+                    description: "JSON Files",
+                    accept: { "application/json": [".json"] },
                 },
             ],
-        }).then((handle: any) => {
-            return handle.createWritable();
-        }).then((writable: any) => {
-            return writable.write(jsonStr).then(() => writable.close());
-        }).catch((err: any) => {
-            alert('Save cancelled or failed.');
-        });
+        })
+            .then((handle: any) => {
+                return handle.createWritable();
+            })
+            .then((writable: any) => {
+                return writable.write(jsonStr).then(() => writable.close());
+            })
+            .catch((err: any) => {
+                alert("Save cancelled or failed.");
+            });
         return;
     }
     // Fallback: download as file
-    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const blob = new Blob([jsonStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'wiezen_score.json';
+    a.download = "wiezen_score.json";
     document.body.appendChild(a);
     a.click();
     setTimeout(() => {
@@ -195,31 +217,34 @@ function load(btn: HTMLElement) {
             const text = e.target?.result as string;
             console.log(text);
             let loadObj = JSON.parse(text);
-            if (!loadObj.players || !loadObj.scoreTable || loadObj.deler == undefined) {
-                alert('invalid file');
+            if (
+                !loadObj.players ||
+                !loadObj.scoreTable ||
+                loadObj.deler == undefined
+            ) {
+                alert("invalid file");
                 return;
             }
 
-            players = loadObj.players
+            players = loadObj.players;
             PS.setPlayers(players);
             PS.setDeler(loadObj.deler);
 
-            if (loadObj.types)
-                roundTypes = loadObj.types;
-            RTI = new RoundTypeInitializer('ModeSelector', roundTypes);
+            if (loadObj.types) roundTypes = loadObj.types;
+            RTI = new RoundTypeInitializer("ModeSelector", roundTypes);
 
             let tempScores = loadObj.scoreTable as Array<Array<number>>;
 
-            ST = new HistoryTable<number>('ScoreTable', players, tempScores);
+            ST = new HistoryTable<number>("ScoreTable", players, tempScores);
 
             loadedFile = file;
         } catch (er) {
             alert(er);
-            return
+            return;
         }
     };
     reader.onerror = () => {
-        alert('Error reading file.');
+        alert("Error reading file.");
     };
     reader.readAsText(file);
 }
