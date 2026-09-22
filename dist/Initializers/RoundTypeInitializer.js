@@ -97,6 +97,7 @@ export class RoundTypeInitializer {
         textInEl.style.marginRight = "2px";
         const OptionBtnEl = document.createElement("button");
         OptionBtnEl.innerText = "Options >";
+        OptionBtnEl.className = "small";
         topDiv.appendChild(textInEl);
         topDiv.appendChild(OptionBtnEl);
         //Add Option div + show/hide

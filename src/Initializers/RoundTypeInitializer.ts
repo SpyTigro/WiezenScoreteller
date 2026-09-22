@@ -129,6 +129,7 @@ export class RoundTypeInitializer {
 
         const OptionBtnEl = document.createElement("button");
         OptionBtnEl.innerText = "Options >";
+        OptionBtnEl.className = "small";
 
         topDiv.appendChild(textInEl);
         topDiv.appendChild(OptionBtnEl);
