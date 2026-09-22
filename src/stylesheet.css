@@ -17,7 +17,7 @@ p {
     margin: 0;
 }
 
-hr.checkRadioDivider{
+hr.checkRadioDivider {
     border-top: 2px solid lightgray;
     border-radius: 6px;
     width: 100px;
@@ -76,6 +76,7 @@ input {
     background: #fff;
     color: #111;
     transition: border 0.2s;
+    width: 150px;
 }
 
 input[type="number"] {
@@ -188,11 +189,11 @@ input[type="file"] {
     z-index: 2;
 }
 
-.deler {  
+.deler {
     font-weight: bold;
     color: #111;
     background: #fff;
-    border: 2px solid #111; 
+    border: 2px solid #111;
     border-radius: 8px;
     padding: 2px 8px;
     margin-right: 6px;
@@ -202,7 +203,7 @@ input[type="file"] {
     margin: 2px;
 }
 
-.main{
+.main {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -218,12 +219,14 @@ input[type="file"] {
         max-width: 100vw;
         padding: 18px 8px;
         border-radius: 24px;
-        box-shadow: 2px 0 16px 0 rgba(0,0,0,0.10);
+        box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.10);
         overflow-y: auto;
     }
+
     .main {
         padding: 18px 6px;
     }
+
     h1 {
         font-size: 1.3rem;
     }
@@ -233,6 +236,7 @@ input[type="file"] {
     body {
         flex-direction: column;
     }
+
     .sidebar {
         min-width: 100vw;
         max-width: 100vw;
@@ -241,10 +245,13 @@ input[type="file"] {
         position: static;
         overflow-y: auto;
     }
+
     .main {
         padding: 8px 2vw;
     }
-    .HistoryTable th, .HistoryTable td {
+
+    .HistoryTable th,
+    .HistoryTable td {
         padding: 6px 4px;
         font-size: 0.95rem;
     }
